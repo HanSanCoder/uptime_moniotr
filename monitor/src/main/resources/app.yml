@@ -1,0 +1,40 @@
+server.port: 8888
+
+solon.app:
+  name: 'monitor-app'
+  group: 'monitor-group'
+
+solon.logging.logger:
+  "org.eclipse.jetty.*":
+    level: "WARN"
+  "com.zaxxer.hikari.*":
+    level: "WARN"
+
+
+# Database connection configuration
+solon.dataSource:
+  db1:
+    jdbcUrl: jdbc:mysql://localhost:3306/monitor?useUnicode=true&characterEncoding=utf-8&useSSL=false&serverTimezone=UTC
+    driverClassName: com.mysql.cj.jdbc.Driver
+    class: com.zaxxer.hikari.HikariDataSource
+    username: root
+    password: 123456
+
+
+# MyBatis-Plus configuration for Solon
+mybatis.db1:
+  type-aliases-package: io.hansan.monitor.model
+  mappers:
+    - "io.hansan.monitor.mapper.*"
+    - "classpath:io/hansan/monitor/mapper/*.xml"
+  configuration:  #扩展配置（要与 Configuration 类的属性一一对应）
+    cacheEnabled: false
+    mapperVerifyEnabled: false
+    mapUnderscoreToCamelCase: true
+  global-config:
+    db-config:
+      id-type: auto
+      logic-delete-field: is_deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
+
