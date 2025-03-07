@@ -4,14 +4,4 @@
         "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="io.hansan.monitor.mapper.UserMapper">
 
-    <!-- Result Map -->
-    <resultMap id="UserModelResultMap" type="io.hansan.monitor.model.UserModel">
-        <id property="id" column="id" />
-        <result property="username" column="username" />
-        <result property="passwordHash" column="password_hash" />
-        <result property="email" column="email" />
-        <result property="createdAt" column="created_at" />
-        <result property="updatedAt" column="updated_at" />
-    </resultMap>
-
 </mapper>

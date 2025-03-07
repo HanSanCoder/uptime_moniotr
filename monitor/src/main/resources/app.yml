@@ -1,4 +1,4 @@
-server.port: 8888
+server.port: 8889
 
 solon.app:
   name: 'monitor-app'
@@ -6,9 +6,9 @@ solon.app:
 
 solon.logging.logger:
   "org.eclipse.jetty.*":
-    level: "WARN"
+    level: "ERROR"
   "com.zaxxer.hikari.*":
-    level: "WARN"
+    level: "ERROR"
 
 
 # Database connection configuration

@@ -21,16 +21,4 @@ public interface MonitorMapper extends BaseMapper<MonitorModel> {
     @Select("SELECT * FROM monitor WHERE hostname = #{hostname} AND port = #{port} AND type = 'tcp'")
     List<MonitorModel> findTcpMonitorsByHostAndPort(@Param("hostname") String hostname, @Param("port") Integer port);
 
-    @Insert("INSERT INTO monitor_history (monitor_id, is_success, response_time, status_code, check_time) " +
-           "VALUES (#{monitorId}, #{success}, #{responseTime}, #{statusCode}, NOW())")
-    void saveCheckResult(@Param("monitorId") Integer monitorId,
-                        @Param("success") boolean success,
-                        @Param("responseTime") long responseTime,
-                        @Param("statusCode") int statusCode);
-
-    @Select("SELECT is_success, response_time, status_code, check_time " +
-           "FROM monitor_history " +
-           "WHERE monitor_id = #{monitorId} " +
-           "ORDER BY check_time DESC LIMIT #{limit}")
-    List<Map<String, Object>> getRecentHistory(@Param("monitorId") Integer monitorId, @Param("limit") int limit);
-}
+    }

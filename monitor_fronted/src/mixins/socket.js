@@ -14,25 +14,8 @@ const noSocketIOPages = [
     /^\/status/,    // /status**
     /^\/$/      //  /
 ];
-// 创建模拟 socket，不进行实际连接
-// const createMockSocket = () => {
-//     return {
-//         on: () => {},
-//         emit: (event, ...args) => {
-//             // 提取回调函数（如果存在）
-//             const callback = args[args.length - 1];
-//             if (typeof callback === 'function') {
-//                 // 模拟成功响应
-//                 setTimeout(() => {
-//                     callback({ ok: true, msg: "离线模式下操作已完成" });
-//                 }, 100);
-//             }
-//             return true;
-//         }
-//     };
-// };
 
-let socket = createMockSocket();
+let socket;
 const favicon = new Favico({
     animation: "none"
 });
@@ -52,7 +35,8 @@ export default {
             username: null,
             remember: (localStorage.remember !== "0"),
             allowLoginDialog: false,        // Allowed to show login dialog, but "loggedIn" have to be true too. This exists because prevent the login dialog show 0.1s in first before the socket server auth-ed.
-            loggedIn: false,
+            // loggedIn: false,
+            loggedIn: true,
             monitorList: { },
             maintenanceList: {},
             apiKeyList: {},
@@ -111,18 +95,14 @@ export default {
 
             let protocol = location.protocol + "//";
 
-            let url;
-            const env = process.env.NODE_ENV || "production";
-            if (env === "development" && isDevContainer()) {
-                url = protocol + getDevContainerServerHostname();
-            } else if (env === "development" || localStorage.dev === "dev") {
-                url = protocol + location.hostname + ":3001";
-            } else {
-                // Connect to the current url
-                url = undefined;
-            }
-
-            socket = io(url);
+            let url = protocol + location.hostname + ":3001";
+            socket = io(url, {
+                path: '/socket.io',
+                reconnectionAttempts: 5,
+                reconnectionDelay: 1000,
+                timeout: 20000,
+                transports: ['websocket', 'polling'],
+            });
 
             socket.on("info", (info) => {
                 this.info = info;
@@ -132,12 +112,12 @@ export default {
                 this.$router.push("/setup");
             });
 
-            socket.on("autoLogin", (monitorID, data) => {
-                this.loggedIn = true;
-                this.storage().token = "autoLogin";
-                this.socket.token = "autoLogin";
-                this.allowLoginDialog = false;
-            });
+            // socket.on("autoLogin", (monitorID, data) => {
+            //     this.loggedIn = true;
+            //     this.storage().token = "autoLogin";
+            //     this.socket.token = "autoLogin";
+            //     this.allowLoginDialog = false;
+            // });
 
             socket.on("monitorList", (data) => {
                 // Add Helper function
@@ -157,9 +137,9 @@ export default {
                 this.maintenanceList = data;
             });
 
-            socket.on("apiKeyList", (data) => {
-                this.apiKeyList = data;
-            });
+            // socket.on("apiKeyList", (data) => {
+            //     this.apiKeyList = data;
+            // });
 
             socket.on("notificationList", (data) => {
                 this.notificationList = data;
@@ -180,9 +160,9 @@ export default {
                 });
             });
 
-            socket.on("dockerHostList", (data) => {
-                this.dockerHostList = data;
-            });
+            // socket.on("dockerHostList", (data) => {
+            //     this.dockerHostList = data;
+            // });
 
             socket.on("heartbeat", (data) => {
                 if (! (data.monitorID in this.heartbeatList)) {
@@ -251,20 +231,20 @@ export default {
 
             socket.on("connect_error", (err) => {
                 console.error(`Failed to connect to the backend. Socket.io connect_error: ${err.message}`);
-                this.connectionErrorMsg = `${this.$t("Cannot connect to the socket server.")} [${err}] ${this.$t("Reconnecting...")}`;
-                this.showReverseProxyGuide = true;
+                this.connectionErrorMsg = `${this.$t("Cannot connect to the socket server at")} ${url}. ${this.$t("Reconnecting...")}`;
+                this.showReverseProxyGuide = false;
                 this.socket.connected = false;
                 this.socket.firstConnect = false;
             });
 
             socket.on("disconnect", () => {
-                console.log("disconnect");
+                console.log("Socket连接断开");
                 this.connectionErrorMsg = "Lost connection to the socket server. Reconnecting...";
                 this.socket.connected = false;
             });
 
             socket.on("connect", () => {
-                console.log("Connected to the socket server");
+                console.log("Socket服务器连接成功！！！");
                 this.socket.connectCount++;
                 this.socket.connected = true;
                 this.showReverseProxyGuide = false;
@@ -274,69 +254,31 @@ export default {
                     this.clearData();
                 }
 
-                let token = this.storage().token;
-
-                if (token) {
-                    if (token !== "autoLogin") {
-                        this.loginByToken(token);
-                    } else {
-                        // Timeout if it is not actually auto login
-                        setTimeout(() => {
-                            if (! this.loggedIn) {
-                                this.allowLoginDialog = true;
-                                this.$root.storage().removeItem("token");
-                            }
-                        }, 5000);
-                    }
-                } else {
-                    this.allowLoginDialog = true;
-                }
+                // let token = this.storage().token;
+                //
+                // if (token) {
+                //     if (token !== "autoLogin") {
+                //         this.loginByToken(token);
+                //     } else {
+                //         // Timeout if it is not actually auto login
+                //         setTimeout(() => {
+                //             if (! this.loggedIn) {
+                //                 this.allowLoginDialog = true;
+                //                 this.$root.storage().removeItem("token");
+                //             }
+                //         }, 5000);
+                //     }
+                // } else {
+                //     this.allowLoginDialog = true;
+                // }
 
                 this.socket.firstConnect = false;
-            });
-
-            // cloudflared
-            socket.on("cloudflared_installed", (res) => this.cloudflared.installed = res);
-            socket.on("cloudflared_running", (res) => this.cloudflared.running = res);
-            socket.on("cloudflared_message", (res) => this.cloudflared.message = res);
-            socket.on("cloudflared_errorMessage", (res) => this.cloudflared.errorMessage = res);
-            socket.on("cloudflared_token", (res) => this.cloudflared.cloudflareTunnelToken = res);
-
-            socket.on("initServerTimezone", () => {
-                socket.emit("initServerTimezone", dayjs.tz.guess());
             });
 
             socket.on("refresh", () => {
                 location.reload();
             });
         },
-        // initSocketIO(bypass = false) {
-        //     // 如果已初始化则不再重复
-        //     if (this.socket.initedSocketIO) {
-        //         return;
-        //     }
-        //
-        //     this.socket.initedSocketIO = true;
-        //     this.socket.connected = true; // 显示为已连接状态
-        //     this.showReverseProxyGuide = false;
-        //     this.loggedIn = true; // 离线模式下自动登录
-        //     this.allowLoginDialog = false;
-        //
-        //     // 初始化空数据
-        //     this.monitorList = {};
-        //     this.heartbeatList = {};
-        //     this.importantHeartbeatList = {};
-        //
-        //     // 使用模拟 socket
-        //     socket = createMockSocket();
-        //
-        //     console.log("运行在离线模式 - 不会建立实际的 socket 连接");
-        //
-        //     // 确保停留在仪表盘页面
-        //     if (this.$router.currentRoute.value.path !== '/dashboard') {
-        //         this.$router.push('/dashboard');
-        //     }
-        // },
         /**
          * The storage currently in use
          * @returns {Storage}

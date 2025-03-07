@@ -29,12 +29,12 @@ public class UserModel {
     /**
      * 用户的哈希密码
      */
-    private String passwordHash;
+    private String password;
 
     /**
-     * 用户的电子邮件地址
+     * 用户状态
      */
-    private String email;
+    private boolean active;
 
     /**
      * 用户创建的时间戳

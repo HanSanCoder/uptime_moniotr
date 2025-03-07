@@ -14,7 +14,7 @@
     <groupId>io.hansan</groupId>
     <artifactId>monitor</artifactId>
     <version>1.0</version>
-    
+
     <packaging>jar</packaging>
 
 
@@ -32,10 +32,10 @@
             <artifactId>mysql-connector-java</artifactId>
             <version>8.0.33</version>
         </dependency>
-        <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon-logging-logback</artifactId>
-        </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.noear</groupId>-->
+        <!--    <artifactId>solon-logging-logback</artifactId>-->
+        <!--</dependency>-->
 
         <dependency>
             <groupId>org.projectlombok</groupId>
@@ -49,10 +49,18 @@
             <groupId>org.noear</groupId>
             <artifactId>solon-scheduling-quartz</artifactId>
         </dependency>
+        <!--<dependency>-->
+        <!--    <groupId>org.noear</groupId>-->
+        <!--    <artifactId>solon-logging-simple</artifactId>-->
+        <!--</dependency>-->
+
+        <!-- Socket.IO server -->
         <dependency>
-            <groupId>org.noear</groupId>
-            <artifactId>solon-logging-simple</artifactId>
+            <groupId>com.corundumstudio.socketio</groupId>
+            <artifactId>netty-socketio</artifactId>
+            <version>2.0.12</version>
         </dependency>
+
 
         <dependency>
             <groupId>org.noear</groupId>
@@ -86,6 +94,29 @@
             <artifactId>solon-test</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--日志依赖-->
+       <!-- 移除solon-logging-logback依赖 -->
+        <dependency>
+            <groupId>org.noear</groupId>
+            <artifactId>solon-logging-log4j2</artifactId>
+        </dependency>
+
+        <!-- Log4j2依赖 -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>2.17.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j-impl</artifactId>
+            <version>2.17.2</version>
+        </dependency>
     </dependencies>
 
 
@@ -99,8 +130,8 @@
             </plugin>
         </plugins>
     </build>
-    
-    <repositories>		
+
+    <repositories>
         <repository>
 			<id>tencent</id>
 			<url>https://mirrors.cloud.tencent.com/nexus/repository/maven-public/</url>

@@ -1,0 +1,57 @@
+Configuration:
+        status: warn
+
+        Properties:
+          Property:
+            - name: pattern
+              value: "%style{%d{HH:mm:ss.SSS}}{faint} %highlight{%-5level} %style{│}{bright_black} %style{%c{1.}}{cyan} %style{│}{bright_black} %msg%n"
+
+        Appenders:
+          Console:
+            name: Console
+            target: SYSTEM_OUT
+            PatternLayout:
+              disableAnsi: false
+              pattern: ${pattern}
+
+        Loggers:
+          Root:
+            level: info
+            AppenderRef:
+              ref: Console
+
+          Logger:
+            # 应用代码使用详细日志
+            - name: monitor
+              level: debug
+              additivity: false
+              AppenderRef:
+                ref: Console
+
+            # Socket.IO库日志减少详细程度
+            - name: com.corundumstudio.socketio
+              level: info
+              additivity: false
+              AppenderRef:
+                ref: Console
+
+            # 框架日志限制在警告级别
+            - name: org.noear.solon
+              level: warn
+              additivity: false
+              AppenderRef:
+                ref: Console
+
+            # 限制Netty日志
+            - name: io.netty
+              level: warn
+              additivity: false
+              AppenderRef:
+                ref: Console
+
+            # 限制MyBatis日志
+            - name: com.baomidou
+              level: warn
+              additivity: false
+              AppenderRef:
+                ref: Console
