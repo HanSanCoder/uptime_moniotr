@@ -3,6 +3,11 @@ package io.hansan.monitor.model;
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -40,13 +45,13 @@ public class MonitorModel {
     /**
      * 监控任务所属用户ID
      */
-    private Integer user_id;
+    private Integer userId;
 
     /**
      * 检查间隔时间（秒）
      * 默认为20秒
      */
-    private Integer check_interval;
+    private Integer checkInterval;
 
     /**
      * 要监控的URL地址
@@ -84,7 +89,10 @@ public class MonitorModel {
      * 创建时间
      * 默认为当前时间戳
      */
-    private LocalDateTime created_date;
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdDate;
 
     /**
      * 关键词

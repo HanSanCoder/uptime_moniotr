@@ -31,6 +31,7 @@ mybatis.db1:
     cacheEnabled: false
     mapperVerifyEnabled: false
     mapUnderscoreToCamelCase: true
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl
   global-config:
     db-config:
       id-type: auto

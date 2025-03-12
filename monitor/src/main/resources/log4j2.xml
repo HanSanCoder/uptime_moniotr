@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="ERROR">
+    <Properties>
+        <Property name="log_root_level">INFO</Property>
+        <Property name="project_name">Uptime Monitor</Property>
+        <Property name="log_mybatis_level">DEBUG</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout disableAnsi="false"
+                           pattern="%date{yyyy-MM-dd HH:mm:ss.SSS} [${project_name}] [%5level] [%thread] - %msg%n"/>
+        </Console>
+    </Appenders>
+
+    <Loggers>
+        <Root level="${sys:log_root_level:-INFO}">
+            <AppenderRef ref="Console"/>
+        </Root>
+
+        <!-- MyBatis SQL执行日志 -->
+        <Logger name="io.hansan.monitor.mapper" level="${log_mybatis_level}" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Socket.IO库日��详细级别 -->
+        <Logger name="com.corundumstudio.socketio" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Socket事件处理器日志 -->
+        <Logger name="io.hansan.monitor.handler" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- WebSocket配置类日志 -->
+        <Logger name="io.hansan.monitor.configs.WebSocketConfig" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- 框架日志限制在警告级别 -->
+        <Logger name="org.noear.solon" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+
+        <!-- Netty日志 -->
+        <Logger name="io.netty" level="WARN" additivity="false">
+            <AppenderRef ref="Console"/>
+        </Logger>
+    </Loggers>
+</Configuration>
