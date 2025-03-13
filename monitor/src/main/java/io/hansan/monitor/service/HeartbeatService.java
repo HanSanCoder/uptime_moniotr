@@ -1,227 +1,118 @@
 package io.hansan.monitor.service;
 
-        import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-        import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-        import io.hansan.monitor.model.HeartbeatModel;
-        import io.hansan.monitor.mapper.HeartbeatMapper;
-        import lombok.extern.slf4j.Slf4j;
-        import org.noear.solon.annotation.Component;
-        import org.noear.solon.annotation.Inject;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.hansan.monitor.model.HeartbeatModel;
+import io.hansan.monitor.mapper.HeartbeatMapper;
+import lombok.extern.slf4j.Slf4j;
+import org.noear.solon.annotation.Component;
+import org.noear.solon.annotation.Inject;
 
-        import java.time.LocalDateTime;
-        import java.util.HashMap;
-        import java.util.List;
-        import java.util.Map;
-        import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 
-        @Slf4j
-        @Component
-        public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatModel> {
+@Slf4j
+@Component
+public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatModel> {
 
-            @Inject
-            private MaintenanceService maintenanceService;
+    @Inject
+    private MaintenanceService maintenanceService;
 
-            @Inject
-            private HeartbeatMapper heartbeatMapper;
-            /**
-             * Add a heartbeat record and return the heartbeat object for client sending
-             */
-            public Map<String, Object> add(Integer monitorId, Integer status, String msg, Double ping, Boolean important) {
-                // Check if under maintenance mode
+    @Inject
+    private HeartbeatMapper heartbeatMapper;
 
-                // Create heartbeat record
-                HeartbeatModel heartbeat = new HeartbeatModel();
-                heartbeat.setMonitorId(monitorId);
-                heartbeat.setStatus(status);
-                heartbeat.setMsg(msg);
-                heartbeat.setPing(ping != null ? ping.intValue() : null);
-                heartbeat.setImportant(important != null && important);
-                heartbeat.setTime(LocalDateTime.now());
+    /**
+     * Get heartbeat records for a specific monitor
+     */
+    public List<HeartbeatModel> getBeats(Integer monitorId) {
+        LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
+                .eq(HeartbeatModel::getMonitorId, monitorId)
+                .orderByDesc(HeartbeatModel::getTime)
+                .last("LIMIT 100");
+        List<HeartbeatModel> beats = this.list(wrapper);
 
-                // Save to database
-                this.save(heartbeat);
+        return beats;
+    }
 
-                // Return format for Socket server sending
-                return toBeatObject(heartbeat);
-            }
+    /**
+     * 获取重要心跳记录并包含监控器名称
+     */
+    public List<HeartbeatModel> getImportantHeartbeats(Integer monitorId) {
+        // 获取心跳记录
+        List<HeartbeatModel> beats = heartbeatMapper.selectImportantHeartbeatsWithName(monitorId);
+        return beats;
+    }
 
-            /**
-             * Get heartbeat records for a specific monitor
-             */
-            public List<Map<String, Object>> getBeats(Integer monitorId, Integer period) {
-                LocalDateTime timeOffset = LocalDateTime.now();
+    /**
+     * Clear all heartbeat records for a specific monitor
+     */
+    public boolean clearHeartbeats(Integer monitorId) {
+        LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
+                .eq(HeartbeatModel::getMonitorId, monitorId);
 
-                if (period > 0) {
-                    timeOffset = timeOffset.minusHours(period);
-                } else {
-                    timeOffset = timeOffset.minusYears(100); // Return all if period is 0
-                }
+        return this.remove(wrapper);
+    }
 
-                LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
-                        .eq(HeartbeatModel::getMonitorId, monitorId)
-                        .gt(HeartbeatModel::getTime, timeOffset)
-                        .orderByAsc(HeartbeatModel::getTime);
 
-                List<HeartbeatModel> beats = this.list(wrapper);
+    /**
+     * Calculate average response time
+     */
+    public Double getAveragePing(Integer monitorId) {
+        LocalDateTime timeOffset = LocalDateTime.now().minusHours(24);
 
-                return beats.stream()
-                        .map(this::toBeatObject)
-                        .collect(Collectors.toList());
-            }
+        LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
+                .eq(HeartbeatModel::getMonitorId, monitorId)
+                .eq(HeartbeatModel::getStatus, 1) // UP
+                .gt(HeartbeatModel::getTime, timeOffset)
+                .isNotNull(HeartbeatModel::getPing);
 
-            /**
-             * Get important heartbeat records
-             */
-            public List<Map<String, Object>> getImportantHeartbeats(Integer monitorId, Integer limit) {
-                if (limit == null || limit <= 0) {
-                    limit = 50;
-                }
+        List<HeartbeatModel> beats = this.list(wrapper);
 
-                LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
-                        .eq(HeartbeatModel::getMonitorId, monitorId)
-                        .eq(HeartbeatModel::getImportant, true)
-                        .orderByDesc(HeartbeatModel::getTime)
-                        .last("LIMIT " + limit);
-
-                List<HeartbeatModel> beats = this.list(wrapper);
-
-                return beats.stream()
-                        .map(this::toBeatObject)
-                        .collect(Collectors.toList());
-            }
-
-            /**
-             * Clear all heartbeat records for a specific monitor
-             */
-            public boolean clearHeartbeats(Integer monitorId) {
-                LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
-                        .eq(HeartbeatModel::getMonitorId, monitorId);
-
-                return this.remove(wrapper);
-            }
-
-            /**
-             * Get the latest heartbeat records for all monitors
-             */
-            public Map<String, Map<String, Object>> getAllLastHeartbeat() {
-                // Use native mapper method to get the last heartbeat for each monitor
-                // You need to implement this method in HeartbeatMapper interface
-                List<HeartbeatModel> lastHeartbeats = this.heartbeatMapper.findAllLastHeartbeats();
-
-                Map<String, Map<String, Object>> result = new HashMap<>();
-                for (HeartbeatModel beat : lastHeartbeats) {
-                    result.put(beat.getMonitorId().toString(), toBeatObject(beat));
-                }
-
-                return result;
-            }
-
-            public List<HeartbeatModel> listAll() {
-                return heartbeatMapper.findAllLastHeartbeats();
-            }
-            /**
-             * Calculate average response time
-             */
-            public Double getAveragePing(Integer monitorId) {
-                LocalDateTime timeOffset = LocalDateTime.now().minusHours(24);
-
-                LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
-                        .eq(HeartbeatModel::getMonitorId, monitorId)
-                        .eq(HeartbeatModel::getStatus, 1) // UP
-                        .gt(HeartbeatModel::getTime, timeOffset)
-                        .isNotNull(HeartbeatModel::getPing);
-
-                // Get all heartbeats
-                List<HeartbeatModel> beats = this.list(wrapper);
-
-                if (beats.isEmpty()) {
-                    return 0.0;
-                }
-
-                // Calculate average manually
-                double sum = beats.stream()
-                        .mapToInt(HeartbeatModel::getPing)
-                        .average()
-                        .orElse(0.0);
-
-                return sum;
-            }
-
-            /**
-             * Calculate uptime
-             */
-            public Double getUptime(Integer monitorId, Integer period) {
-                LocalDateTime timeOffset = LocalDateTime.now().minusHours(period);
-
-                // Total heartbeats
-                LambdaQueryWrapper<HeartbeatModel> totalWrapper = new LambdaQueryWrapper<HeartbeatModel>()
-                        .eq(HeartbeatModel::getMonitorId, monitorId)
-                        .gt(HeartbeatModel::getTime, timeOffset);
-
-                long total = this.count(totalWrapper);
-
-                if (total == 0) {
-                    return 0.0;
-                }
-
-                // UP status heartbeats
-                LambdaQueryWrapper<HeartbeatModel> upWrapper = new LambdaQueryWrapper<HeartbeatModel>()
-                        .eq(HeartbeatModel::getMonitorId, monitorId)
-                        .eq(HeartbeatModel::getStatus, 1) // UP
-                        .gt(HeartbeatModel::getTime, timeOffset);
-
-                long up = this.count(upWrapper);
-
-                return (double) up / total * 100;
-            }
-
-            /**
-             * Convert heartbeat record to client sending format
-             */
-            private Map<String, Object> toBeatObject(HeartbeatModel beat) {
-                Map<String, Object> result = new HashMap<>();
-                result.put("id", beat.getId());
-                result.put("monitorID", beat.getMonitorId());
-                result.put("status", beat.getStatus());
-                result.put("time", beat.getTime().toString());
-                result.put("msg", beat.getMsg());
-                result.put("ping", beat.getPing());
-                result.put("important", beat.getImportant() != null && beat.getImportant());
-
-                return result;
-            }
-
-            /**
-             * Provide heartbeat list for WebSocket service
-             */
-            public Map<String, Object> getHeartbeatListData(Integer monitorId, Integer period) {
-                List<Map<String, Object>> beats = getBeats(monitorId, period);
-
-                Map<String, Object> response = new HashMap<>();
-                response.put("monitorId", monitorId);
-                response.put("beats", beats);
-
-                return response;
-            }
-
-            /**
-             * Get monitor statistics
-             */
-            public Map<String, Object> getMonitorStats(Integer monitorId) {
-                Map<String, Object> stats = new HashMap<>();
-
-                // Average response time
-                Double avgPing = getAveragePing(monitorId);
-                stats.put("avgPing", avgPing);
-
-                // 24-hour uptime
-                Double uptime24h = getUptime(monitorId, 24);
-                stats.put("uptime24h", uptime24h);
-
-                // 30-day uptime
-                Double uptime30d = getUptime(monitorId, 24 * 30);
-                stats.put("uptime30d", uptime30d);
-
-                return stats;
-            }
+        if (beats.isEmpty()) {
+            return 0.0;
         }
+        double sum = beats.stream()
+                .mapToInt(HeartbeatModel::getPing)
+                .average()
+                .orElse(0.0);
+
+        return sum;
+    }
+
+    /**
+     * socket.on("uptime", (monitorID, type, data)
+     */
+    public Map<String, Double> getUptimeData(Integer monitorId) {
+        Map<String, Double> result = new HashMap<>();
+        Date now = new Date();
+
+        // 计算24小时正常运行时间
+        Date start24h = getDateBefore(now, Calendar.HOUR, 24);
+        Double uptime24h = heartbeatMapper.calculateUptime(monitorId, start24h, now);
+        result.put("24", uptime24h);
+        // 计算7天正常运行时间
+        Date start7d = getDateBefore(now, Calendar.DAY_OF_MONTH, 7);
+        Double uptime7d = heartbeatMapper.calculateUptime(monitorId, start7d, now);
+        result.put("24x7", uptime7d); // 对应前端的一周
+
+        // 计算30天正常运行时间
+        Date start30d = getDateBefore(now, Calendar.DAY_OF_MONTH, 30);
+        Double uptime30d = heartbeatMapper.calculateUptime(monitorId, start30d, now);
+        result.put("720", uptime30d); // 对应前端的30天
+
+        return result;
+    }
+
+    /**
+     * 获取指定日期前的日期
+     */
+    private Date getDateBefore(Date date, int calendarField, int amount) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.add(calendarField, -amount);
+        return calendar.getTime();
+    }
+
+
+}

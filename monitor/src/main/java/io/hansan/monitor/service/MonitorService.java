@@ -8,8 +8,10 @@ package io.hansan.monitor.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.hansan.monitor.dto.TagDTO;
 import io.hansan.monitor.mapper.MonitorMapper;
 import io.hansan.monitor.model.MonitorModel;
+import lombok.extern.slf4j.Slf4j;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
@@ -17,7 +19,8 @@ import javax.management.monitor.Monitor;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.stream.Collectors;
+@Slf4j
 @Component
 public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
 
@@ -28,30 +31,30 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
      * 获取所有监控项
      */
     public List<MonitorModel> listAll() {
-        return this.list();
+        // 获取所有监控项
+        List<MonitorModel> monitors = monitorMapper.findAll();
+
+        // 查询每个监控项的标签
+        for (MonitorModel monitor : monitors) {
+            List<TagDTO> tags = monitorMapper.findTagsByMonitorId(monitor.getId());
+            log.info("tags: {}", tags);
+            monitor.setTags(tags);
+        }
+
+        return monitors;
     }
 
     /**
-     * 获取监控项详情
+     * 获取所有监控器ID
      */
-//    public MonitorModel getDetails(Integer monitorId) {
-//        // 获取基本信息
-//        MonitorModel monitor = this.getById(monitorId);
-//        if (monitor != null) {
-//            // 获取最近的心跳记录
-//            monitor.setLatestHeartbeat(monitorMapper.getLatestHeartbeat(monitorId));
-//            // 获取最近24小时的状态统计
-//            monitor.setStatusStats(monitorMapper.getStatusStats(monitorId));
-//        }
-//        return monitor;
-//    }
-
-    /**
-     * 更新监控项状态
-     */
-//    public void updateStatus(Integer monitorId, Integer status, String message) {
-//        monitorMapper.updateStatus(monitorId, status, message);
-//    }
+    public List<Integer> listAllIds() {
+        LambdaQueryWrapper<MonitorModel> wrapper = new LambdaQueryWrapper<>();
+        wrapper.select(MonitorModel::getId);
+        return this.list(wrapper)
+                .stream()
+                .map(MonitorModel::getId)
+                .collect(Collectors.toList());
+    }
 
     /**
      * 添加新的监控项

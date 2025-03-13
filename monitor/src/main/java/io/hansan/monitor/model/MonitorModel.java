@@ -1,6 +1,7 @@
 package io.hansan.monitor.model;
 
 import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -8,9 +9,11 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import io.hansan.monitor.dto.TagDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * @Author ：何汉叁
@@ -35,6 +38,7 @@ public class MonitorModel {
      */
     private String name;
 
+    private String pathName;
     /**
      * 监控任务是否激活
      * true: 激活状态，会被定时检查
@@ -105,4 +109,6 @@ public class MonitorModel {
      * 监控失败时的重试次数，默认为0
      */
     private Integer maxretries;
+    @TableField(exist = false)
+    private List<TagDTO> tags;
 }

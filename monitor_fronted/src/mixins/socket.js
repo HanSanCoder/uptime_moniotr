@@ -120,8 +120,9 @@ export default {
             // });
 
             socket.on("monitorList", (data) => {
-                // Add Helper function
-                Object.entries(data).forEach(([monitorID, monitor]) => {
+                const restructuredData = {};
+                Object.entries(data).forEach(([ monitorID, monitor ]) => {
+                    // 添加辅助函数
                     monitor.getUrl = () => {
                         try {
                             return new URL(monitor.url);
@@ -129,8 +130,11 @@ export default {
                             return null;
                         }
                     };
+
+                    // 使用monitor.id作为键
+                    restructuredData[monitor.id] = monitor;
                 });
-                this.monitorList = data;
+                this.monitorList = restructuredData;
             });
 
             socket.on("maintenanceList", (data) => {
@@ -229,11 +233,11 @@ export default {
             });
 
             socket.on("connect_error", (err) => {
-                console.error(`Failed to connect to the backend. Socket.io connect_error: ${err.message}`);
-                this.connectionErrorMsg = `${this.$t("Cannot connect to the socket server at")} ${url}. ${this.$t("Reconnecting...")}`;
-                this.showReverseProxyGuide = false;
-                this.socket.connected = false;
-                this.socket.firstConnect = false;
+                    console.error(`Failed to connect to the backend. Socket.io connect_error: ${err.message}`);
+                    this.connectionErrorMsg = `${this.$t("Cannot connect to the socket server at")} ${url}. ${this.$t("Reconnecting...")}`;
+                    this.showReverseProxyGuide = false;
+                    this.socket.connected = false;
+                    this.socket.firstConnect = false;
             });
 
             socket.on("disconnect", () => {
@@ -639,7 +643,6 @@ export default {
 
         lastHeartbeatList() {
             let result = {};
-
             for (let monitorID in this.heartbeatList) {
                 let index = this.heartbeatList[monitorID].length - 1;
                 result[monitorID] = this.heartbeatList[monitorID][index];
@@ -658,7 +661,6 @@ export default {
 
             for (let monitorID in this.lastHeartbeatList) {
                 let lastHeartBeat = this.lastHeartbeatList[monitorID];
-
                 if (!lastHeartBeat) {
                     result[monitorID] = unknown;
                 } else if (lastHeartBeat.status === UP) {

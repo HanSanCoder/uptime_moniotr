@@ -57,11 +57,7 @@ export default {
          * @returns {string} Correctly formatted path including port numbers
          */
         icon(icon) {
-            if (icon === "/icon.svg") {
-                return icon;
-            } else {
-                return getResBaseURL() + icon;
-            }
+            return "/icon.svg";
         }
     },
 };

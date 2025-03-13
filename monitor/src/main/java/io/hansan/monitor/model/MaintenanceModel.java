@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalTimeSerializer;
 import lombok.Data;
+
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.HashMap;
@@ -31,45 +34,16 @@ public class MaintenanceModel {
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime endDate;
-
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime startTime;
+    @JsonDeserialize(using = LocalTimeDeserializer.class)
+    @JsonSerialize(using = LocalTimeSerializer.class)
+    @JsonFormat(pattern = "HH:mm:ss")
     private LocalTime endTime;
     private String weekdays = "[]";
     private String daysOfMonth = "[]";
     private Integer intervalDay;
 
-    /**
-     * 返回准备好解析为JSON的对象
-     * @return Map对象
-     */
-    public Map<String, Object> toJSON() {
-        Map<String, Object> json = new HashMap<>();
-        json.put("id", id);
-        json.put("title", title);
-        json.put("description", description);
-        json.put("active", active);
-        json.put("strategy", strategy);
-        json.put("startDate", startDate);
-        json.put("endDate", endDate);
-        json.put("startTime", startTime);
-        json.put("endTime", endTime);
-        json.put("weekdays", weekdays);
-        json.put("daysOfMonth", daysOfMonth);
-        json.put("intervalDay", intervalDay);
-        return json;
-    }
-
-    /**
-     * 返回准备好解析为JSON的公开对象
-     * @return Map对象
-     */
-    public Map<String, Object> toPublicJSON() {
-        Map<String, Object> json = new HashMap<>();
-        json.put("id", id);
-        json.put("title", title);
-        json.put("description", description);
-        json.put("startDate", startDate);
-        json.put("endDate", endDate);
-        return json;
-    }
 }

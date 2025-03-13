@@ -81,7 +81,6 @@ public class SocketIOExceptionConfig {
         // 设置异常处理器
         config.setExceptionListener(exceptionListener);
 
-        log.info("Socket.IO全局异常处理器已配置");
         return config;
     }
 }

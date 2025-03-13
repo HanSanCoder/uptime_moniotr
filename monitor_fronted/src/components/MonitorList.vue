@@ -126,80 +126,119 @@ export default {
          * @return {Array} The sorted list of monitors.
          */
         sortedMonitorList() {
+          try {
+            // 获取所有监控项
             let result = Object.values(this.$root.monitorList);
 
+            // 如果有搜索或过滤，才应用过滤逻辑
+            const hasFilters =
+                this.searchText !== "" ||
+                (this.filterState.status != null && this.filterState.status.length > 0) ||
+                (this.filterState.active != null && this.filterState.active.length > 0) ||
+                (this.filterState.tags != null && this.filterState.tags.length > 0);
+
+            // 如果没有过滤器激活，则返回所有监控项(可选择只显示父级监控项)
+            if (!hasFilters) {
+              // 如果要只显示父级监控项，使用下面一行
+              // return result.filter(monitor => monitor && monitor.parent === null);
+
+              // 如果要显示所有监控项，使用下面一行
+              return result.filter(monitor => monitor !== null);
+            }
+
+            // 应用过滤逻辑，与现有代码相同，但添加了安全检查
             result = result.filter(monitor => {
-                // filter by search text
-                // finds monitor name, tag name or tag value
-                let searchTextMatch = true;
-                if (this.searchText !== "") {
-                    const loweredSearchText = this.searchText.toLowerCase();
-                    searchTextMatch =
-                        monitor.name.toLowerCase().includes(loweredSearchText)
-                        || monitor.tags.find(tag => tag.name.toLowerCase().includes(loweredSearchText)
-                            || tag.value?.toLowerCase().includes(loweredSearchText));
-                }
+              if (!monitor) return false;
 
-                // filter by status
-                let statusMatch = true;
-                if (this.filterState.status != null && this.filterState.status.length > 0) {
-                    if (monitor.id in this.$root.lastHeartbeatList && this.$root.lastHeartbeatList[monitor.id]) {
-                        monitor.status = this.$root.lastHeartbeatList[monitor.id].status;
-                    }
-                    statusMatch = this.filterState.status.includes(monitor.status);
-                }
+              // 搜索文本匹配
+              let searchTextMatch = true;
+              if (this.searchText !== "") {
+                const loweredSearchText = this.searchText.toLowerCase();
+                searchTextMatch =
+                    (monitor.name ? monitor.name.toLowerCase().includes(loweredSearchText) : false) ||
+                    (monitor.tags && Array.isArray(monitor.tags) && monitor.tags.some(tag =>
+                        (tag && tag.name ? tag.name.toLowerCase().includes(loweredSearchText) : false) ||
+                        (tag && tag.value ? tag.value.toLowerCase().includes(loweredSearchText) : false)
+                    ));
+              }
 
-                // filter by active
-                let activeMatch = true;
-                if (this.filterState.active != null && this.filterState.active.length > 0) {
-                    activeMatch = this.filterState.active.includes(monitor.active);
+              // 状态过滤
+              let statusMatch = true;
+              if (this.filterState.status != null && this.filterState.status.length > 0) {
+                if (this.$root.lastHeartbeatList &&
+                    monitor.id in this.$root.lastHeartbeatList &&
+                    this.$root.lastHeartbeatList[monitor.id]) {
+                  monitor.status = this.$root.lastHeartbeatList[monitor.id].status;
                 }
+                statusMatch = monitor.status != null && this.filterState.status.includes(monitor.status);
+              }
 
-                // filter by tags
-                let tagsMatch = true;
-                if (this.filterState.tags != null && this.filterState.tags.length > 0) {
-                    tagsMatch = monitor.tags.map(tag => tag.tag_id) // convert to array of tag IDs
-                        .filter(monitorTagId => this.filterState.tags.includes(monitorTagId)) // perform Array Intersaction between filter and monitor's tags
-                        .length > 0;
+              // 活动状态过滤
+              let activeMatch = true;
+              if (this.filterState.active != null && this.filterState.active.length > 0) {
+                activeMatch = monitor.active != null && this.filterState.active.includes(monitor.active);
+              }
+
+              // 标签过滤
+              let tagsMatch = true;
+              if (this.filterState.tags != null && this.filterState.tags.length > 0) {
+                if (monitor.tags && Array.isArray(monitor.tags)) {
+                  const monitorTagIds = monitor.tags
+                      .filter(tag => tag != null)
+                      .map(tag => tag.tag_id)
+                      .filter(id => id != null);
+                  tagsMatch = monitorTagIds.length > 0 &&
+                      monitorTagIds.some(id => this.filterState.tags.includes(id));
+                } else {
+                  tagsMatch = false;
                 }
+              }
 
-                // Hide children if not filtering
-                let showChild = true;
-                if (this.filterState.status == null && this.filterState.active == null && this.filterState.tags == null && this.searchText === "") {
-                    if (monitor.parent !== null) {
-                        showChild = false;
-                    }
-                }
+              // 移除子项隐藏逻辑，使所有项目默认显示
+              /*
+              let showChild = true;
+              if (this.filterState.status == null && this.filterState.active == null &&
+                  this.filterState.tags == null && this.searchText === "") {
+                  if (monitor.parent !== null) {
+                      showChild = false;
+                  }
+              }
+              */
+              const showChild = true; // 始终显示所有项目，包括子项
 
-                return searchTextMatch && statusMatch && activeMatch && tagsMatch && showChild;
+              return searchTextMatch && statusMatch && activeMatch && tagsMatch && showChild;
             });
 
-            // Filter result by active state, weight and alphabetical
+            // 排序逻辑保持不变，但添加安全检查
             result.sort((m1, m2) => {
-                if (m1.active !== m2.active) {
-                    if (m1.active === false) {
-                        return 1;
-                    }
+              if (!m1 || !m2) return 0;
 
-                    if (m2.active === false) {
-                        return -1;
-                    }
+              if (m1.active !== m2.active) {
+                if (m1.active === false) {
+                  return 1;
                 }
-
-                if (m1.weight !== m2.weight) {
-                    if (m1.weight > m2.weight) {
-                        return -1;
-                    }
-
-                    if (m1.weight < m2.weight) {
-                        return 1;
-                    }
+                if (m2.active === false) {
+                  return -1;
                 }
+              }
 
-                return m1.name.localeCompare(m2.name);
+              if (m1.weight !== m2.weight) {
+                if (m1.weight > m2.weight) {
+                  return -1;
+                }
+                if (m1.weight < m2.weight) {
+                  return 1;
+                }
+              }
+
+              return m1.name && m2.name ? m1.name.localeCompare(m2.name) : 0;
             });
 
             return result;
+          } catch (error) {
+            console.error("Error in sortedMonitorList:", error);
+            return []; // 出错时返回空数组
+          }
         },
 
         isDarkTheme() {

@@ -11,11 +11,11 @@
     <result column="url" property="url"/>
     <result column="type" property="type"/>
     <!-- 数据库中的interval_sec映射到Java类的check_interval属性 -->
-    <result column="check_interval" property="check_interval"/>
+    <result column="check_interval" property="checkInterval"/>
     <!-- 数据库中的is_active映射到Java类的active属性 -->
     <result column="active" property="active"/>
     <!-- 用户ID映射 -->
-    <result column="user_id" property="user_id"/>
+    <result column="user_id" property="userId"/>
     <!-- 权重映射 -->
     <result column="weight" property="weight"/>
     <!-- 主机名映射 -->
@@ -23,7 +23,7 @@
     <!-- 端口映射 -->
     <result column="port" property="port"/>
     <!-- 创建日期映射 -->
-    <result column="created_date" property="created_date"/>
+    <result column="created_date" property="createdDate"/>
     <!-- 关键词映射 -->
     <result column="keyword" property="keyword"/>
     <!-- 最大重试次数映射 -->

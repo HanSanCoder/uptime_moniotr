@@ -8,11 +8,13 @@ package io.hansan.monitor.handler;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.model.MonitorModel;
 import io.hansan.monitor.service.MonitorService;
+import io.hansan.monitor.service.TagService;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -24,7 +26,8 @@ public class InitMonitorHandler {
 
     @Inject
     private MonitorService monitorService;
-
+    @Inject
+    private TagService tagService;
     // 处理获取监控详情事件
     public DataListener<Integer> getMonitorDetailListener() {
         return (client, userId, ack) -> {
@@ -32,31 +35,11 @@ public class InitMonitorHandler {
         };
     }
 
-    // 处理创建监控事件
-    public DataListener<MonitorModel> createMonitorListener() {
-        return (client, monitor, ack) -> {
-            log.debug("创建监控事件 - 会话ID: {}, 监控名称: {}", client.getSessionId(), monitor.getName());
-            try {
-                boolean save = monitorService.save(monitor);
-                client.sendEvent("monitorCreated", save);
-            } catch (Exception e) {
-                log.error("创建监控时出错: " + client.getSessionId(), e);
-                client.sendEvent("error", "创建监控失败：" + e.getMessage());
-            }
-        };
-    }
 
-    // 处理更新监控状态事件
-    public DataListener<Map<String, Object>> updateMonitorStatusListener() {
+    // 处理获取标签列表事件
+    public DataListener<Void> getTags() {
         return (client, data, ack) -> {
-            try {
-                Integer monitorId = (Integer) data.get("id");
-                Boolean active = (Boolean) data.get("active");
-                client.sendEvent("statusUpdated", true);
-            } catch (Exception e) {
-                log.error("更新监控状态时出错: " + client.getSessionId(), e);
-                client.sendEvent("error", "更新监控状态失败：" + e.getMessage());
-            }
+            ack.sendAckData(tagService.listAll());
         };
     }
 

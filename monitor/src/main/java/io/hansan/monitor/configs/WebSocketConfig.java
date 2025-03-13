@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.handler.*;
+import io.hansan.monitor.service.TagService;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -17,10 +18,8 @@ public class WebSocketConfig implements LifecycleBean {
 
     @Inject
     private ConnectionHandler connectionHandler;
-
     @Inject
     private DisconnectionHandler disconnectionHandler;
-
     @Inject
     private InitMonitorHandler initMonitorHandler;
     @Inject
@@ -49,6 +48,7 @@ public class WebSocketConfig implements LifecycleBean {
         server.addDisconnectListener(disconnectionHandler);
         server.addEventListener("refresh", String.class, getRefreshListener());
         server.addEventListener("getMonitor", Integer.class, initMonitorHandler.getMonitorDetailListener());
+        server.addEventListener("getTags", Void.class, initMonitorHandler.getTags());
         server.start();
     }
 

@@ -2,13 +2,14 @@ package io.hansan.monitor.model;
 
 /**
  * @Author ：何汉叁
- * @Date ：2025/3/6 11:15
+ * @Date ：2025/3/12 17:43
  * @Description：TODO
  */
 import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -16,64 +17,49 @@ import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import lombok.Data;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
- * 心跳记录实体类
- * 对应数据库中的 heartbeat 表
+ * Tag实体类
  */
 @Data
-@TableName("heartbeat")
-public class HeartbeatModel {
+@TableName("tag")
+public class Tag implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
     /**
-     * 心跳记录ID，主键，自增
+     * 标签ID
      */
     @TableId(value = "id", type = IdType.AUTO)
-    private Integer id;
+    private Long id;
 
     /**
-     * 关联监控项ID
+     * 标签名称
      */
-    private Integer monitorId;
-
-    @TableField(exist = false)
+    @TableField("name")
     private String name;
-    /**
-     * 状态码
-     * 0=正常，1-5=错误级别
-     */
-    private Integer status;
 
     /**
-     * 状态信息
+     * 标签颜色
      */
-    private String msg;
-    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
-    @JsonSerialize(using = LocalDateTimeSerializer.class)
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime time;
-
-    private Boolean important;
-    /**
-     * 响应时间（毫秒）
-     */
-    private Integer ping;
-
-    /**
-     * 持续时间（秒）
-     * 默认为0
-     */
-    private Integer duration;
+    @TableField("color")
+    private String color;
 
     /**
      * 创建时间
-     * 默认为当前时间戳
      */
     @JsonDeserialize(using = LocalDateTimeDeserializer.class)
     @JsonSerialize(using = LocalDateTimeSerializer.class)
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    private LocalDateTime createdAt;
+    private LocalDateTime createTime;
 
+    /**
+     * 更新时间
+     */
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime updateTime;
 }

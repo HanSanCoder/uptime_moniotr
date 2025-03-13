@@ -20,26 +20,4 @@ public class MonitorGroup {
     private Boolean isPublic = false;
     private List<MonitorModel> monitors;
 
-    /**
-     * 返回准备好解析为JSON的对象
-     * @return Map对象
-     */
-    public Map<String, Object> toJSON() {
-        Map<String, Object> json = new HashMap<>();
-        json.put("id", id);
-        json.put("statusPageId", statusPageId);
-        json.put("name", name);
-        json.put("weight", weight);
-        json.put("public", isPublic);
-        return json;
-    }
-
-    /**
-     * 返回准备好解析为JSON的公开对象
-     * @return Map对象
-     */
-    public Map<String, Object> toPublicJSON() {
-        Map<String, Object> json = toJSON();
-        return json;
-    }
 }

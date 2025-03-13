@@ -251,10 +251,10 @@ export default {
         /** Get all existing tags */
         getExistingTags() {
             this.$root.getSocket().emit("getTags", (res) => {
-                if (res.ok) {
-                    this.existingTags = res.tags;
+                if (res) {
+                    this.existingTags = res;
                 } else {
-                    toast.error(res.msg);
+                    toast.error("获取标签失败");
                 }
             });
         },

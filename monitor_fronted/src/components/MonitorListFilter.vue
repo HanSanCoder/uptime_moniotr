@@ -241,9 +241,7 @@ export default {
         },
         getExistingTags() {
             this.$root.getSocket().emit("getTags", (res) => {
-                if (res.ok) {
-                    this.tagsList = res.tags;
-                }
+                this.tagsList = res;
             });
         },
         getTaggedMonitorCount(tag) {
