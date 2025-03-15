@@ -3,8 +3,10 @@ package io.hansan.monitor.configs;
 import com.corundumstudio.socketio.Configuration;
 import com.corundumstudio.socketio.SocketIOServer;
 import com.corundumstudio.socketio.listener.DataListener;
+import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.handler.*;
-import io.hansan.monitor.service.TagService;
+import io.hansan.monitor.model.Maintenance;
+import io.hansan.monitor.model.Tag;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -14,8 +16,7 @@ import org.slf4j.LoggerFactory;
 
 @Component
 public class WebSocketConfig implements LifecycleBean {
-    private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class);
-
+private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class);
     @Inject
     private ConnectionHandler connectionHandler;
     @Inject
@@ -23,8 +24,11 @@ public class WebSocketConfig implements LifecycleBean {
     @Inject
     private InitMonitorHandler initMonitorHandler;
     @Inject
-    private BroadcastHelper broadcastHelper;
-
+    private FindHandler findHandler;
+    @Inject
+    private CreateHandler createHandler;
+    @Inject
+    private DeleteHandler deleteHandler;
     private SocketIOServer server;
 
     @Bean
@@ -36,10 +40,6 @@ public class WebSocketConfig implements LifecycleBean {
         return new SocketIOServer(config);
     }
 
-    public void broadcastUpdate(Integer monitorId, Object heartbeat) {
-        broadcastHelper.broadcastUpdate(monitorId, heartbeat);
-    }
-
     @Override
     public void start() throws Throwable {
         server = socketIOServer();
@@ -47,8 +47,19 @@ public class WebSocketConfig implements LifecycleBean {
         server.addConnectListener(connectionHandler);
         server.addDisconnectListener(disconnectionHandler);
         server.addEventListener("refresh", String.class, getRefreshListener());
-        server.addEventListener("getMonitor", Integer.class, initMonitorHandler.getMonitorDetailListener());
+        server.addEventListener("getMonitorList", Void.class, initMonitorHandler.getMonitorList());
         server.addEventListener("getTags", Void.class, initMonitorHandler.getTags());
+        server.addEventListener("add", MonitorDTO.class, createHandler.addMonitor());
+        server.addEventListener("addMaintenance", Maintenance.class, createHandler.addMaintenance());
+        server.addEventListener("addTag", Tag.class, createHandler.addTag());
+        server.addEventListener("deleteTag", Integer.class, deleteHandler.deleteTag());
+        server.addEventListener("addMonitorTag", Object[].class, createHandler.addMonitorTag());
+        server.addEventListener("deleteMonitorTag", Object[].class, deleteHandler.deleteMonitorTag());
+        server.addEventListener("getMonitorMaintenance", Integer.class, findHandler.getMonitorMaintenance());
+        server.addEventListener("addMonitorMaintenance", Object[].class, createHandler.addMonitorMaintenance());
+        server.addEventListener("setSettings", Integer.class, createHandler.setSettings());
+        server.addEventListener("getSettings", Integer.class, findHandler.getSettings());
+        server.addEventListener("editTag", Tag.class, findHandler.editTag());
         server.start();
     }
 

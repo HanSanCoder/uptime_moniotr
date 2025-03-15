@@ -43,4 +43,13 @@ public class InitMonitorHandler {
         };
     }
 
+    public DataListener<Void> getMonitorList() {
+        return (client, data, ack) -> {
+            List<MonitorModel> monitorList = monitorService.getMonitorsByUserId(1);
+            ack.sendAckData(monitorList);
+            client.sendEvent("monitorList", monitorService.getMonitorsByUserId(1));
+        };
+    }
+
+
 }

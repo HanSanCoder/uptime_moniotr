@@ -10,14 +10,13 @@
     <result column="name" property="name"/>
     <result column="url" property="url"/>
     <result column="type" property="type"/>
-    <!-- 数据库中的interval_sec映射到Java类的check_interval属性 -->
-    <result column="check_interval" property="checkInterval"/>
     <!-- 数据库中的is_active映射到Java类的active属性 -->
     <result column="active" property="active"/>
     <!-- 用户ID映射 -->
     <result column="user_id" property="userId"/>
     <!-- 权重映射 -->
     <result column="weight" property="weight"/>
+    <result column="check_interval" property="check_interval"/>
     <!-- 主机名映射 -->
     <result column="hostname" property="hostname"/>
     <!-- 端口映射 -->
@@ -29,5 +28,18 @@
     <!-- 最大重试次数映射 -->
     <result column="maxretries" property="maxretries"/>
 </resultMap>
+    <insert id="batchInsertMonitorNotifications">
+        INSERT INTO monitor_notification (monitor_id, notification_id)
+        VALUES
+        <foreach collection="notificationIds" item="notificationId" separator=",">
+            (#{monitorId}, #{notificationId})
+        </foreach>
+    </insert>
+<select id="getMonitorsByUserId" resultMap="monitorResultMap">
+    SELECT *
+    FROM monitor
+    WHERE user_id = #{userId}
+    ORDER BY weight DESC, name ASC
+</select>
 
 </mapper>

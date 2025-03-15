@@ -382,7 +382,7 @@ export default {
     },
     mounted() {
         this.$root.getMonitorList((res) => {
-            if (res.ok) {
+            if (res) {
                 Object.values(this.$root.monitorList).sort((m1, m2) => {
 
                     if (m1.active !== m2.active) {
@@ -445,11 +445,12 @@ export default {
                 };
             } else if (this.isEdit) {
                 this.$root.getSocket().emit("getMaintenance", this.$route.params.id, (res) => {
-                    if (res.ok) {
+                    if (res) {
                         this.maintenance = res.maintenance;
 
                         this.$root.getSocket().emit("getMonitorMaintenance", this.$route.params.id, (res) => {
                             if (res.ok) {
+                              console.log("返回结果了")
                                 Object.values(res.monitors).map(monitor => {
                                     this.affectedMonitors.push(this.affectedMonitorsOptions.find(item => item.id === monitor.id));
                                 });

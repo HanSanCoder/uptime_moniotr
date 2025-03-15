@@ -182,7 +182,7 @@ export default {
                 if (this.settings.trustProxy === undefined) {
                     this.settings.trustProxy = false;
                 }
-
+                this.$root.toastSuccess(res.data)
                 this.settingsLoaded = true;
             });
         },

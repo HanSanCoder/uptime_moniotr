@@ -55,30 +55,6 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
     }
 
 
-    /**
-     * Calculate average response time
-     */
-    public Double getAveragePing(Integer monitorId) {
-        LocalDateTime timeOffset = LocalDateTime.now().minusHours(24);
-
-        LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
-                .eq(HeartbeatModel::getMonitorId, monitorId)
-                .eq(HeartbeatModel::getStatus, 1) // UP
-                .gt(HeartbeatModel::getTime, timeOffset)
-                .isNotNull(HeartbeatModel::getPing);
-
-        List<HeartbeatModel> beats = this.list(wrapper);
-
-        if (beats.isEmpty()) {
-            return 0.0;
-        }
-        double sum = beats.stream()
-                .mapToInt(HeartbeatModel::getPing)
-                .average()
-                .orElse(0.0);
-
-        return sum;
-    }
 
     /**
      * socket.on("uptime", (monitorID, type, data)
@@ -114,5 +90,14 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
         return calendar.getTime();
     }
 
-
+    private boolean add(Integer monitorId, Integer status, String msg, Double ping, Boolean important) {
+        HeartbeatModel heartbeat = new HeartbeatModel();
+        heartbeat.setMonitorId(monitorId);
+        heartbeat.setStatus(status);
+        heartbeat.setMsg(msg);
+        heartbeat.setPing(ping);
+        heartbeat.setImportant(important);
+        heartbeat.setTime(LocalDateTime.now());
+        return this.save(heartbeat);
+    }
 }

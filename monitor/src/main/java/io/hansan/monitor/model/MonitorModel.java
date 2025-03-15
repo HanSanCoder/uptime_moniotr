@@ -55,7 +55,8 @@ public class MonitorModel {
      * 检查间隔时间（秒）
      * 默认为20秒
      */
-    private Integer checkInterval;
+    @TableField(value = "check_interval")
+    private Integer check_interval;
 
     /**
      * 要监控的URL地址
@@ -103,6 +104,7 @@ public class MonitorModel {
      * 用于HTTP监控检查响应内容中是否包含特定关键词
      */
     private String keyword;
+    private String description;
 
     /**
      * 最大重试次数

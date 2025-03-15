@@ -314,7 +314,7 @@ export default {
             }
 
             for (let addId of this.addingMonitor) {
-                await this.addMonitorTagAsync(this.tag.id, addId, "").then((res) => {
+                await this.addMonitorTagAsync(this.tag.id, addId).then((res) => {
                     if (!res.ok) {
                         toast.error(res.msg);
                         editResult = false;
@@ -423,9 +423,9 @@ export default {
          * @param {string} value Value of tag
          * @returns {Promise<void>}
          */
-        addMonitorTagAsync(tagId, monitorId, value) {
+        addMonitorTagAsync(tagId, monitorId) {
             return new Promise((resolve) => {
-                this.$root.getSocket().emit("addMonitorTag", tagId, monitorId, value, resolve);
+                this.$root.getSocket().emit("addMonitorTag", [tagId, monitorId], resolve);
             });
         },
         /**

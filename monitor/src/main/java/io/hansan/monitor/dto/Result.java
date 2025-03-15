@@ -1,0 +1,26 @@
+package io.hansan.monitor.dto;
+
+import io.hansan.monitor.model.MonitorModel;
+import io.hansan.monitor.model.Tag;
+import lombok.Builder;
+import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
+
+/**
+ * @Author ：何汉叁
+ * @Date ：2025/3/13 21:32
+ * @Description：TODO
+ */
+@Data
+public class Result {
+    private Integer monitorID;
+    private String msg;
+    private String message;
+    private boolean ok;
+    private Long tagId;
+    private Tag tag;
+    private Map<Integer, MonitorModel> monitors;
+    private String data;
+}

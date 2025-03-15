@@ -83,8 +83,8 @@ export default {
             this.processing = true;
             this.$root.getSocket().emit("getTags", (res) => {
                 this.processing = false;
-                if (res.ok) {
-                    this.tagsList = res.tags;
+                if (res) {
+                    this.tagsList = res;
                 } else {
                     toast.error(res.msg);
                 }
@@ -129,7 +129,7 @@ export default {
                 this.$root.toastRes(res);
                 this.processing = false;
 
-                if (res.ok) {
+                if (res.constructor) {
                     this.tagsUpdated();
                 }
             });

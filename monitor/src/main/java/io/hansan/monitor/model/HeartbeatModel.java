@@ -59,7 +59,7 @@ public class HeartbeatModel {
     /**
      * 响应时间（毫秒）
      */
-    private Integer ping;
+    private Double ping;
 
     /**
      * 持续时间（秒）

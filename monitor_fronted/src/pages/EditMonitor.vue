@@ -1410,27 +1410,27 @@ message HealthCheckResponse {
 
             let createdNewParent = false;
 
-            if (this.draftGroupName && this.monitor.parent === -1) {
-                // Create Monitor with name of draft group
-                const res = await new Promise((resolve) => {
-                    this.$root.add({
-                        ...monitorDefaults,
-                        type: "group",
-                        name: this.draftGroupName,
-                        interval: this.monitor.interval,
-                        active: false,
-                    }, resolve);
-                });
-
-                if (res.ok) {
-                    createdNewParent = true;
-                    this.monitor.parent = res.monitorID;
-                } else {
-                    toast.error(res.msg);
-                    this.processing = false;
-                    return;
-                }
-            }
+            // if (this.draftGroupName && this.monitor.parent === -1) {
+            //     // Create Monitor with name of draft group
+            //     const res = await new Promise((resolve) => {
+            //         this.$root.add({
+            //             ...monitorDefaults,
+            //             type: "group",
+            //             name: this.draftGroupName,
+            //             interval: this.monitor.interval,
+            //             active: false,
+            //         }, resolve);
+            //     });
+            //
+            //     if (res.ok) {
+            //         createdNewParent = true;
+            //         this.monitor.parent = res.monitorID;
+            //     } else {
+            //         toast.error(res.msg);
+            //         this.processing = false;
+            //         return;
+            //     }
+            // }
 
             if (this.isAdd || this.isClone) {
                 this.$root.add(this.monitor, async (res) => {
@@ -1443,13 +1443,13 @@ message HealthCheckResponse {
                             this.startParentGroupMonitor();
                         }
 
-                        toast.success(res.msg);
+                        toast.success(res.message);
                         this.processing = false;
                         this.$root.getMonitorList();
                         this.$router.push("/dashboard/" + res.monitorID);
 
                     } else {
-                        toast.error(res.msg);
+                        toast.error(res.message);
                         this.processing = false;
                     }
 

@@ -30,8 +30,6 @@ public class ConnectionHandler implements ConnectListener {
     @Inject
     private NotificationService notificationService;
     @Inject
-    private HeartbeatSocketHandler heartbeatSocketHandler;
-    @Inject
     private HeartbeatService heartbeatService;
     @Inject
     private MaintenanceService maintenanceService;

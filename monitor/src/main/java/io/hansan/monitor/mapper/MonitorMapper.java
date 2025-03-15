@@ -12,8 +12,7 @@ import java.util.Map;
 @Mapper
 public interface MonitorMapper extends BaseMapper<MonitorModel> {
 
-    @Select("SELECT * FROM monitor WHERE active = true ORDER BY id")
-    List<MonitorModel> getAllActive();
+    List<MonitorModel> getMonitorsByUserId(Integer userId);
 
     @Select("SELECT * FROM monitor WHERE type = #{type} ORDER BY id")
     List<MonitorModel> getMonitorsByType(String type);
@@ -33,4 +32,14 @@ public interface MonitorMapper extends BaseMapper<MonitorModel> {
 
     @Select("SELECT *, monitor.name AS pathName FROM monitor")
     List<MonitorModel> findAll();
+
+    /**
+     * 批量插入monitor_notification关联表数据
+     * @param monitorId 监控ID
+     * @param notificationIds 通知配置ID列表
+     * @return 插入的行数
+     */
+    int batchInsertMonitorNotifications(@Param("monitorId") Integer monitorId,
+                                       @Param("notificationIds") List<Integer> notificationIds);
+
 }

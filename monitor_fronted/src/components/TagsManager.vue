@@ -344,7 +344,7 @@ export default {
          */
         addMonitorTagAsync(tagId, monitorId, value) {
             return new Promise((resolve) => {
-                this.$root.getSocket().emit("addMonitorTag", tagId, monitorId, value, resolve);
+                this.$root.getSocket().emit("addMonitorTag", [tagId, monitorId], resolve);
             });
         },
         /**
