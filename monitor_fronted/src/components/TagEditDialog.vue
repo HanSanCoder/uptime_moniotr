@@ -437,7 +437,7 @@ export default {
          */
         deleteMonitorTagAsync(tagId, monitorId, value) {
             return new Promise((resolve) => {
-                this.$root.getSocket().emit("deleteMonitorTag", tagId, monitorId, value, resolve);
+                this.$root.getSocket().emit("deleteMonitorTag", [tagId, monitorId], resolve);
             });
         },
     },

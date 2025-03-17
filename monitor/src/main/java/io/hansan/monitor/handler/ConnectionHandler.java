@@ -51,6 +51,7 @@ public class ConnectionHandler implements ConnectListener {
             client.sendEvent("importantHeartbeatList", monitorId, heartbeatService.getImportantHeartbeats(monitorId), true);
             client.sendEvent("uptime", monitorId, 720, heartbeatService.getUptimeData(monitorId).get("720"));
             client.sendEvent("uptime", monitorId, 24, heartbeatService.getUptimeData(monitorId).get("24"));
+            client.sendEvent("avgPing", monitorId, heartbeatService.calculateAveragePing(monitorId));
         }
 //        client.sendEvent("heartbeat", heartbeatSocketHandler.heartbeatListener());
         // 发送维护列表

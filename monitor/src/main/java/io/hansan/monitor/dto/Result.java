@@ -23,4 +23,6 @@ public class Result {
     private Tag tag;
     private Map<Integer, MonitorModel> monitors;
     private String data;
+    private MonitorModel monitor;
+    private double avgPing;
 }

@@ -2,6 +2,7 @@ package io.hansan.monitor.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.mapper.HeartbeatMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -55,40 +56,31 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
     }
 
 
-
     /**
      * socket.on("uptime", (monitorID, type, data)
      */
     public Map<String, Double> getUptimeData(Integer monitorId) {
         Map<String, Double> result = new HashMap<>();
-        Date now = new Date();
+        LocalDateTime now = LocalDateTime.now();
 
         // 计算24小时正常运行时间
-        Date start24h = getDateBefore(now, Calendar.HOUR, 24);
+        LocalDateTime start24h = now.minusHours(24);
         Double uptime24h = heartbeatMapper.calculateUptime(monitorId, start24h, now);
         result.put("24", uptime24h);
+
         // 计算7天正常运行时间
-        Date start7d = getDateBefore(now, Calendar.DAY_OF_MONTH, 7);
+        LocalDateTime start7d = now.minusDays(7);
         Double uptime7d = heartbeatMapper.calculateUptime(monitorId, start7d, now);
         result.put("24x7", uptime7d); // 对应前端的一周
 
         // 计算30天正常运行时间
-        Date start30d = getDateBefore(now, Calendar.DAY_OF_MONTH, 30);
+        LocalDateTime start30d = now.minusDays(30);
         Double uptime30d = heartbeatMapper.calculateUptime(monitorId, start30d, now);
         result.put("720", uptime30d); // 对应前端的30天
 
         return result;
     }
 
-    /**
-     * 获取指定日期前的日期
-     */
-    private Date getDateBefore(Date date, int calendarField, int amount) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.add(calendarField, -amount);
-        return calendar.getTime();
-    }
 
     private boolean add(Integer monitorId, Integer status, String msg, Double ping, Boolean important) {
         HeartbeatModel heartbeat = new HeartbeatModel();
@@ -99,5 +91,17 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
         heartbeat.setImportant(important);
         heartbeat.setTime(LocalDateTime.now());
         return this.save(heartbeat);
+    }
+
+    /**
+     * 计算监控的平均ping响应时间
+     */
+    public Result calculateAveragePing(Integer monitorId) {
+        Double avgPing = heartbeatMapper.calculateAveragePing(monitorId);
+        avgPing = avgPing != null ? Double.valueOf(String.format("%.1f", avgPing)) : 0.0;
+        Result result = new Result();
+        result.setAvgPing(avgPing);
+        result.setMonitorID(monitorId);
+        return result;
     }
 }

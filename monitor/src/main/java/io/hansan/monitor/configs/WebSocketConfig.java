@@ -6,6 +6,7 @@ import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.handler.*;
 import io.hansan.monitor.model.Maintenance;
+import io.hansan.monitor.model.MonitorModel;
 import io.hansan.monitor.model.Tag;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Component;
@@ -22,14 +23,16 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
     @Inject
     private DisconnectionHandler disconnectionHandler;
     @Inject
-    private InitMonitorHandler initMonitorHandler;
-    @Inject
     private FindHandler findHandler;
     @Inject
     private CreateHandler createHandler;
     @Inject
     private DeleteHandler deleteHandler;
     private SocketIOServer server;
+
+    public SocketIOServer getSocketIOServer() {
+        return server;
+    }
 
     @Bean
     public SocketIOServer socketIOServer() {
@@ -47,8 +50,8 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addConnectListener(connectionHandler);
         server.addDisconnectListener(disconnectionHandler);
         server.addEventListener("refresh", String.class, getRefreshListener());
-        server.addEventListener("getMonitorList", Void.class, initMonitorHandler.getMonitorList());
-        server.addEventListener("getTags", Void.class, initMonitorHandler.getTags());
+        server.addEventListener("getMonitorList", Void.class, findHandler.getMonitorList());
+        server.addEventListener("getTags", Void.class, findHandler.getTags());
         server.addEventListener("add", MonitorDTO.class, createHandler.addMonitor());
         server.addEventListener("addMaintenance", Maintenance.class, createHandler.addMaintenance());
         server.addEventListener("addTag", Tag.class, createHandler.addTag());
@@ -60,6 +63,10 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("setSettings", Integer.class, createHandler.setSettings());
         server.addEventListener("getSettings", Integer.class, findHandler.getSettings());
         server.addEventListener("editTag", Tag.class, findHandler.editTag());
+        server.addEventListener("deleteMonitor", Integer.class, deleteHandler.deleteMonitor());
+        server.addEventListener("editMonitor", MonitorModel.class, findHandler.editMonitor());
+        server.addEventListener("getMonitor", Integer.class, findHandler.getMonitor());
+
         server.start();
     }
 

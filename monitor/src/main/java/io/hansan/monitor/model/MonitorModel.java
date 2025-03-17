@@ -37,7 +37,7 @@ public class MonitorModel {
      * 监控任务名称
      */
     private String name;
-
+    @TableField(exist = false)
     private String pathName;
     /**
      * 监控任务是否激活
@@ -57,6 +57,8 @@ public class MonitorModel {
      */
     @TableField(value = "check_interval")
     private Integer check_interval;
+    @TableField(exist = false)
+    private Integer checkInterval;
 
     /**
      * 要监控的URL地址

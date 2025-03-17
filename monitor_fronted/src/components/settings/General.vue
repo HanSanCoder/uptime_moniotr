@@ -38,40 +38,40 @@
             </div>
 
             <!-- Search Engine -->
-            <div class="mb-4">
-                <label class="form-label">
-                    {{ $t("Search Engine Visibility") }}
-                </label>
+<!--            <div class="mb-4">-->
+<!--                <label class="form-label">-->
+<!--                    {{ $t("Search Engine Visibility") }}-->
+<!--                </label>-->
 
-                <div class="form-check">
-                    <input
-                        id="searchEngineIndexYes"
-                        v-model="settings.searchEngineIndex"
-                        class="form-check-input"
-                        type="radio"
-                        name="searchEngineIndex"
-                        :value="true"
-                        required
-                    />
-                    <label class="form-check-label" for="searchEngineIndexYes">
-                        {{ $t("Allow indexing") }}
-                    </label>
-                </div>
-                <div class="form-check">
-                    <input
-                        id="searchEngineIndexNo"
-                        v-model="settings.searchEngineIndex"
-                        class="form-check-input"
-                        type="radio"
-                        name="searchEngineIndex"
-                        :value="false"
-                        required
-                    />
-                    <label class="form-check-label" for="searchEngineIndexNo">
-                        {{ $t("Discourage search engines from indexing site") }}
-                    </label>
-                </div>
-            </div>
+<!--                <div class="form-check">-->
+<!--                    <input-->
+<!--                        id="searchEngineIndexYes"-->
+<!--                        v-model="settings.searchEngineIndex"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="searchEngineIndex"-->
+<!--                        :value="true"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" for="searchEngineIndexYes">-->
+<!--                        {{ $t("Allow indexing") }}-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--                <div class="form-check">-->
+<!--                    <input-->
+<!--                        id="searchEngineIndexNo"-->
+<!--                        v-model="settings.searchEngineIndex"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="searchEngineIndex"-->
+<!--                        :value="false"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" for="searchEngineIndexNo">-->
+<!--                        {{ $t("Discourage search engines from indexing site") }}-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- Entry Page -->
             <div class="mb-4">
@@ -133,99 +133,99 @@
             </div>
 
             <!-- Steam API Key -->
-            <div class="mb-4">
-                <label class="form-label" for="steamAPIKey">
-                    {{ $t("Steam API Key") }}
-                </label>
-                <HiddenInput
-                    id="steamAPIKey"
-                    v-model="settings.steamAPIKey"
-                    autocomplete="new-password"
-                />
-                <div class="form-text">
-                    {{ $t("steamApiKeyDescription") }}
-                    <a href="https://steamcommunity.com/dev" target="_blank">
-                        https://steamcommunity.com/dev
-                    </a>
-                </div>
-            </div>
+<!--            <div class="mb-4">-->
+<!--                <label class="form-label" for="steamAPIKey">-->
+<!--                    {{ $t("Steam API Key") }}-->
+<!--                </label>-->
+<!--                <HiddenInput-->
+<!--                    id="steamAPIKey"-->
+<!--                    v-model="settings.steamAPIKey"-->
+<!--                    autocomplete="new-password"-->
+<!--                />-->
+<!--                <div class="form-text">-->
+<!--                    {{ $t("steamApiKeyDescription") }}-->
+<!--                    <a href="https://steamcommunity.com/dev" target="_blank">-->
+<!--                        https://steamcommunity.com/dev-->
+<!--                    </a>-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <!-- DNS Cache (nscd) -->
-            <div v-if="$root.info.isContainer" class="mb-4">
-                <label class="form-label">
-                    {{ $t("enableNSCD") }}
-                </label>
+<!--            &lt;!&ndash; DNS Cache (nscd) &ndash;&gt;-->
+<!--            <div v-if="$root.info.isContainer" class="mb-4">-->
+<!--                <label class="form-label">-->
+<!--                    {{ $t("enableNSCD") }}-->
+<!--                </label>-->
 
-                <div class="form-check">
-                    <input
-                        id="nscdEnable"
-                        v-model="settings.nscd"
-                        class="form-check-input"
-                        type="radio"
-                        name="nscd"
-                        :value="true"
-                        required
-                    />
-                    <label class="form-check-label" for="nscdEnable">
-                        {{ $t("Enable") }}
-                    </label>
-                </div>
+<!--                <div class="form-check">-->
+<!--                    <input-->
+<!--                        id="nscdEnable"-->
+<!--                        v-model="settings.nscd"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="nscd"-->
+<!--                        :value="true"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" for="nscdEnable">-->
+<!--                        {{ $t("Enable") }}-->
+<!--                    </label>-->
+<!--                </div>-->
 
-                <div class="form-check">
-                    <input
-                        id="nscdDisable"
-                        v-model="settings.nscd"
-                        class="form-check-input"
-                        type="radio"
-                        name="nscd"
-                        :value="false"
-                        required
-                    />
-                    <label class="form-check-label" for="nscdDisable">
-                        {{ $t("Disable") }}
-                    </label>
-                </div>
-            </div>
+<!--                <div class="form-check">-->
+<!--                    <input-->
+<!--                        id="nscdDisable"-->
+<!--                        v-model="settings.nscd"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="nscd"-->
+<!--                        :value="false"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" for="nscdDisable">-->
+<!--                        {{ $t("Disable") }}-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--            </div>-->
 
-            <!-- DNS Cache -->
-            <div class="mb-4">
-                <label class="form-label">
-                    {{ $t("Enable DNS Cache") }}
-                    <div class="form-text">
-                        ⚠️ {{ $t("dnsCacheDescription") }}
-                    </div>
-                </label>
+<!--            &lt;!&ndash; DNS Cache &ndash;&gt;-->
+<!--            <div class="mb-4">-->
+<!--                <label class="form-label">-->
+<!--                    {{ $t("Enable DNS Cache") }}-->
+<!--                    <div class="form-text">-->
+<!--                        ⚠️ {{ $t("dnsCacheDescription") }}-->
+<!--                    </div>-->
+<!--                </label>-->
 
-                <div class="form-check">
-                    <input
-                        id="dnsCacheEnable"
-                        v-model="settings.dnsCache"
-                        class="form-check-input"
-                        type="radio"
-                        name="dnsCache"
-                        :value="true"
-                        required
-                    />
-                    <label class="form-check-label" for="dnsCacheEnable">
-                        {{ $t("Enable") }}
-                    </label>
-                </div>
+<!--                <div class="form-check">-->
+<!--                    <input-->
+<!--                        id="dnsCacheEnable"-->
+<!--                        v-model="settings.dnsCache"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="dnsCache"-->
+<!--                        :value="true"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" for="dnsCacheEnable">-->
+<!--                        {{ $t("Enable") }}-->
+<!--                    </label>-->
+<!--                </div>-->
 
-                <div class="form-check">
-                    <input
-                        id="dnsCacheDisable"
-                        v-model="settings.dnsCache"
-                        class="form-check-input"
-                        type="radio"
-                        name="dnsCache"
-                        :value="false"
-                        required
-                    />
-                    <label class="form-check-label" for="dnsCacheDisable">
-                        {{ $t("Disable") }}
-                    </label>
-                </div>
-            </div>
+<!--                <div class="form-check">-->
+<!--                    <input-->
+<!--                        id="dnsCacheDisable"-->
+<!--                        v-model="settings.dnsCache"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="dnsCache"-->
+<!--                        :value="false"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" for="dnsCacheDisable">-->
+<!--                        {{ $t("Disable") }}-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- Chrome Executable -->
             <div class="mb-4">

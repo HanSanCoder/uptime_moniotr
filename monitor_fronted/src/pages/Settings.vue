@@ -92,33 +92,33 @@ export default {
                 notifications: {
                     title: this.$t("Notifications"),
                 },
-                "reverse-proxy": {
-                    title: this.$t("Reverse Proxy"),
-                },
+                // "reverse-proxy": {
+                //     title: this.$t("Reverse Proxy"),
+                // },
                 tags: {
                     title: this.$t("Tags"),
                 },
-                "monitor-history": {
-                    title: this.$t("Monitor History"),
-                },
-                "docker-hosts": {
-                    title: this.$t("Docker Hosts"),
-                },
-                security: {
-                    title: this.$t("Security"),
-                },
-                "api-keys": {
-                    title: this.$t("API Keys")
-                },
-                proxies: {
-                    title: this.$t("Proxies"),
-                },
-                backup: {
-                    title: this.$t("Backup"),
-                },
-                about: {
-                    title: this.$t("About"),
-                },
+                // "monitor-history": {
+                //     title: this.$t("Monitor History"),
+                // },
+                // "docker-hosts": {
+                //     title: this.$t("Docker Hosts"),
+                // },
+                // security: {
+                //     title: this.$t("Security"),
+                // },
+                // "api-keys": {
+                //     title: this.$t("API Keys")
+                // },
+                // proxies: {
+                //     title: this.$t("Proxies"),
+                // },
+                // backup: {
+                //     title: this.$t("Backup"),
+                // },
+                // about: {
+                //     title: this.$t("About"),
+                // },
             };
         },
     },

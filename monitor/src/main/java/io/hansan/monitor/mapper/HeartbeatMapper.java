@@ -21,10 +21,10 @@ public interface HeartbeatMapper extends BaseMapper<HeartbeatModel> {
      * @param limit     限制数量
      * @return 心跳记录列表
      */
-    @Select("SELECT * FROM heartbeat WHERE monitor_id = #{monitorId} ORDER BY time DESC LIMIT #{limit}")
+    @Select("SELECT * FROM heartbeat WHERE monitor_id = #{monitorId} ORDER BY created_at DESC LIMIT #{limit}")
     List<HeartbeatModel> findLatestByMonitorId(@Param("monitorId") Integer monitorId, @Param("limit") Integer limit);
 
-    @Select("SELECT * FROM heartbeat WHERE monitor_id = #{monitorId} ORDER BY time DESC LIMIT #{limit}")
+    @Select("SELECT * FROM heartbeat WHERE monitor_id = #{monitorId} ORDER BY created_at DESC LIMIT #{limit}")
     List<HeartbeatModel> findRecentHeartbeats(@Param("monitorId") Integer monitorId, @Param("limit") Integer limit);
 
     /**
@@ -34,7 +34,7 @@ public interface HeartbeatMapper extends BaseMapper<HeartbeatModel> {
      * @param limit     限制数量
      * @return 心跳记录列表
      */
-    @Select("SELECT * FROM heartbeat WHERE monitor_id = #{monitorId} AND important = 1 ORDER BY time DESC LIMIT #{limit}")
+    @Select("SELECT * FROM heartbeat WHERE monitor_id = #{monitorId} AND important = 1 ORDER BY created_at DESC LIMIT #{limit}")
     List<HeartbeatModel> findImportantByMonitorId(@Param("monitorId") Integer monitorId, @Param("limit") Integer limit);
 
     @Select("SELECT h.*, m.name as name " +
@@ -42,7 +42,7 @@ public interface HeartbeatMapper extends BaseMapper<HeartbeatModel> {
             "LEFT JOIN monitor m ON h.monitor_id = m.id " +
             "WHERE h.monitor_id = #{monitorId} " +
             "AND h.important = true " +
-            "ORDER BY h.time DESC " +
+            "ORDER BY h.created_at DESC " +
             "LIMIT 50")
     List<HeartbeatModel> selectImportantHeartbeatsWithName(@Param("monitorId") Integer monitorId);
 
@@ -55,7 +55,7 @@ public interface HeartbeatMapper extends BaseMapper<HeartbeatModel> {
     /**
      * 获取特定状态的心跳数量
      */
-    @Select("SELECT COUNT(*) FROM heartbeat WHERE monitor_id = #{monitorId} AND time > #{startTime} AND status = #{status}")
+    @Select("SELECT COUNT(*) FROM heartbeat WHERE monitor_id = #{monitorId} AND created_at > #{startTime} AND status = #{status}")
     Integer countByMonitorIdAndStatusAndTimeAfter(
             @Param("monitorId") Integer monitorId,
             @Param("status") Integer status,
@@ -69,8 +69,14 @@ public interface HeartbeatMapper extends BaseMapper<HeartbeatModel> {
             "END AS uptime " +
             "FROM heartbeat " +
             "WHERE monitor_id = #{monitorId} " +
-            "AND time BETWEEN #{startTime} AND #{endTime}")
+            "AND created_at BETWEEN #{startTime} AND #{endTime}")
     Double calculateUptime(@Param("monitorId") Integer monitorId,
-                           @Param("startTime") Date startTime,
-                           @Param("endTime") Date endTime);
+                           @Param("startTime") LocalDateTime startTime,
+                           @Param("endTime") LocalDateTime endTime);
+
+    @Select("SELECT AVG(ping) " +
+            "FROM heartbeat " +
+            "WHERE monitor_id = #{monitorId} " +
+            "AND status != 0 ")
+    Double calculateAveragePing(@Param("monitorId") Integer monitorId);
 }

@@ -86,15 +86,32 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
     /**
      * 删除监控项
      */
-    public boolean deleteMonitor(Integer monitorId) {
-        return this.removeById(monitorId);
+    public Result deleteMonitor(Integer monitorId) {
+        Result result = new Result();
+        boolean removed = this.removeById(monitorId);
+        if (removed) {
+            result.setOk(true);
+            result.setMsg("删除监控成功");
+            return result;
+        }
+        result.setOk(false);
+        return result;
     }
 
     /**
      * 更新监控项
      */
-    public boolean updateMonitor(MonitorModel monitor) {
-        return this.updateById(monitor);
+    public Result updateMonitor(MonitorModel monitor) {
+        Result result = new Result();
+        boolean updated = this.updateById(monitor);
+        if (updated) {
+            result.setOk(true);
+            result.setMsg("更新监控成功");
+            return result;
+        }
+        result.setOk(false);
+        result.setMsg("更新监控失败");
+        return result;
     }
 
     // 获取用户的所有监控项
@@ -123,6 +140,14 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
         Result result = new Result();
         result.setOk(true);
         result.setMonitors(monitors);
+        return result;
+    }
+
+    public Result getByMonitorId(Integer monitorId) {
+        MonitorModel monitor = monitorMapper.selectById(monitorId);
+        Result result = new Result();
+        result.setOk(true);
+        result.setMonitor(monitor);
         return result;
     }
 }

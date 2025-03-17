@@ -45,12 +45,6 @@
             <groupId>org.noear</groupId>
             <artifactId>solon-scheduling-quartz</artifactId>
         </dependency>
-        <!--<dependency>-->
-        <!--    <groupId>org.noear</groupId>-->
-        <!--    <artifactId>solon-logging-simple</artifactId>-->
-        <!--</dependency>-->
-
-        <!-- Socket.IO server -->
         <dependency>
             <groupId>com.corundumstudio.socketio</groupId>
             <artifactId>netty-socketio</artifactId>

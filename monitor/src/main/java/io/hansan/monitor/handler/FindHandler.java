@@ -3,6 +3,7 @@ package io.hansan.monitor.handler;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
+import io.hansan.monitor.model.MonitorModel;
 import io.hansan.monitor.model.Tag;
 import io.hansan.monitor.service.HeartbeatService;
 import io.hansan.monitor.service.MaintenanceService;
@@ -10,6 +11,8 @@ import io.hansan.monitor.service.MonitorService;
 import io.hansan.monitor.service.TagService;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
+
+import java.util.List;
 
 /**
  * @Author ：何汉叁
@@ -50,4 +53,40 @@ public class FindHandler {
             ack.sendAckData(result);
         };
     }
+    public DataListener<Integer> getMonitor() {
+        return (client, data, ack) -> {
+            Result result = monitorService.getByMonitorId(data);
+            ack.sendAckData(result);
+        };
+    }
+    // 处理获取监控详情事件
+    public DataListener<Integer> getMonitorDetailListener() {
+        return (client, userId, ack) -> {
+            client.sendEvent("getMonitor", monitorService.getMonitorsByUserId(userId));
+        };
+    }
+
+
+    // 处理获取标签列表事件
+    public DataListener<Void> getTags() {
+        return (client, data, ack) -> {
+            ack.sendAckData(tagService.listAll());
+        };
+    }
+
+    public DataListener<Void> getMonitorList() {
+        return (client, data, ack) -> {
+            List<MonitorModel> monitorList = monitorService.getMonitorsByUserId(1);
+            ack.sendAckData(monitorList);
+            client.sendEvent("monitorList", monitorService.getMonitorsByUserId(1));
+        };
+    }
+
+    public DataListener<MonitorModel> editMonitor() {
+        return (client, data, ack) -> {
+            Result result = monitorService.updateMonitor(data);
+            ack.sendAckData(result);
+        };
+    }
+
 }

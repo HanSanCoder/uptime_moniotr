@@ -99,12 +99,12 @@
                             </div>
                         </div>
                         <div class="mb-2">
-                            <input
-                                v-model="newDraftTag.value" class="form-control"
-                                :class="{'is-invalid': validateDraftTag.valueInvalid}"
-                                :placeholder="$t('value (optional)')"
-                                @keydown.enter.prevent="onEnter"
-                            />
+<!--                            <input-->
+<!--                                v-model="newDraftTag.value" class="form-control"-->
+<!--                                :class="{'is-invalid': validateDraftTag.valueInvalid}"-->
+<!--                                :placeholder="$t('value (optional)')"-->
+<!--                                @keydown.enter.prevent="onEnter"-->
+<!--                            />-->
                             <div class="invalid-feedback">
                                 {{ $t("Tag with this value already exist.") }}
                             </div>

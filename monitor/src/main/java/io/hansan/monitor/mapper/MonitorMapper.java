@@ -33,6 +33,8 @@ public interface MonitorMapper extends BaseMapper<MonitorModel> {
     @Select("SELECT *, monitor.name AS pathName FROM monitor")
     List<MonitorModel> findAll();
 
+    @Select("SELECT *, monitor.name AS pathName FROM monitor WHERE active = 1 AND (created_date IS NULL OR DATE_ADD(created_date, INTERVAL check_interval SECOND) <= NOW())")
+    List<MonitorModel> findActiveMonitorsDueForCheck();
     /**
      * 批量插入monitor_notification关联表数据
      * @param monitorId 监控ID

@@ -39,4 +39,11 @@ public class DeleteHandler {
             ack.sendAckData(result);
         };
     }
+
+    public DataListener<Integer> deleteMonitor() {
+        return (client, data, ack) -> {
+            Result result = monitorService.deleteMonitor(data);
+            ack.sendAckData(result);
+        };
+    }
 }

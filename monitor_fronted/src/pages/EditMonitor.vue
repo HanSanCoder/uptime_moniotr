@@ -12,9 +12,6 @@
                                 <label for="type" class="form-label">{{ $t("Monitor Type") }}</label>
                                 <select id="type" v-model="monitor.type" class="form-select">
                                     <optgroup :label="$t('General Monitor Type')">
-                                        <option value="group">
-                                            {{ $t("Group") }}
-                                        </option>
                                         <option value="http">
                                             HTTP(s)
                                         </option>
@@ -33,59 +30,59 @@
                                         <option value="grpc-keyword">
                                             gRPC(s) - {{ $t("Keyword") }}
                                         </option>
-                                        <option value="dns">
-                                            DNS
-                                        </option>
-                                        <option value="docker">
-                                            {{ $t("Docker Container") }}
-                                        </option>
+<!--                                        <option value="dns">-->
+<!--                                            DNS-->
+<!--                                        </option>-->
+<!--                                        <option value="docker">-->
+<!--                                            {{ $t("Docker Container") }}-->
+<!--                                        </option>-->
 
-                                        <option value="real-browser">
-                                            HTTP(s) - Browser Engine (Chrome/Chromium) (Beta)
-                                        </option>
+<!--                                        <option value="real-browser">-->
+<!--                                            HTTP(s) - Browser Engine (Chrome/Chromium) (Beta)-->
+<!--                                        </option>-->
                                     </optgroup>
 
-                                    <optgroup :label="$t('Passive Monitor Type')">
-                                        <option value="push">
-                                            Push
-                                        </option>
-                                    </optgroup>
+<!--                                    <optgroup :label="$t('Passive Monitor Type')">-->
+<!--                                        <option value="push">-->
+<!--                                            Push-->
+<!--                                        </option>-->
+<!--                                    </optgroup>-->
 
-                                    <optgroup :label="$t('Specific Monitor Type')">
-                                        <option value="steam">
-                                            {{ $t("Steam Game Server") }}
-                                        </option>
-                                        <option value="gamedig">
-                                            GameDig
-                                        </option>
-                                        <option value="mqtt">
-                                            MQTT
-                                        </option>
-                                        <option value="kafka-producer">
-                                            Kafka Producer
-                                        </option>
-                                        <option value="sqlserver">
-                                            Microsoft SQL Server
-                                        </option>
-                                        <option value="postgres">
-                                            PostgreSQL
-                                        </option>
-                                        <option value="mysql">
-                                            MySQL/MariaDB
-                                        </option>
-                                        <option value="mongodb">
-                                            MongoDB
-                                        </option>
-                                        <option value="radius">
-                                            Radius
-                                        </option>
-                                        <option value="redis">
-                                            Redis
-                                        </option>
-                                        <option v-if="!$root.info.isContainer" value="tailscale-ping">
-                                            Tailscale Ping
-                                        </option>
-                                    </optgroup>
+<!--                                    <optgroup :label="$t('Specific Monitor Type')">-->
+<!--                                        <option value="steam">-->
+<!--                                            {{ $t("Steam Game Server") }}-->
+<!--                                        </option>-->
+<!--                                        <option value="gamedig">-->
+<!--                                            GameDig-->
+<!--                                        </option>-->
+<!--                                        <option value="mqtt">-->
+<!--                                            MQTT-->
+<!--                                        </option>-->
+<!--                                        <option value="kafka-producer">-->
+<!--                                            Kafka Producer-->
+<!--                                        </option>-->
+<!--                                        <option value="sqlserver">-->
+<!--                                            Microsoft SQL Server-->
+<!--                                        </option>-->
+<!--                                        <option value="postgres">-->
+<!--                                            PostgreSQL-->
+<!--                                        </option>-->
+<!--                                        <option value="mysql">-->
+<!--                                            MySQL/MariaDB-->
+<!--                                        </option>-->
+<!--                                        <option value="mongodb">-->
+<!--                                            MongoDB-->
+<!--                                        </option>-->
+<!--                                        <option value="radius">-->
+<!--                                            Radius-->
+<!--                                        </option>-->
+<!--                                        <option value="redis">-->
+<!--                                            Redis-->
+<!--                                        </option>-->
+<!--                                        <option v-if="!$root.info.isContainer" value="tailscale-ping">-->
+<!--                                            Tailscale Ping-->
+<!--                                        </option>-->
+<!--                                    </optgroup>-->
                                 </select>
                             </div>
 
@@ -499,18 +496,18 @@
                             </template>
 
                             <!-- Parent Monitor -->
-                            <div class="my-3">
-                                <label for="monitorGroupSelector" class="form-label">{{ $t("Monitor Group") }}</label>
-                                <ActionSelect
-                                    id="monitorGroupSelector"
-                                    v-model="monitor.parent"
-                                    :action-aria-label="$t('openModalTo', 'setup a new monitor group')"
-                                    :options="parentMonitorOptionsList"
-                                    :disabled="sortedGroupMonitorList.length === 0 && draftGroupName == null"
-                                    :icon="'plus'"
-                                    :action="() => $refs.createGroupDialog.show()"
-                                />
-                            </div>
+<!--                            <div class="my-3">-->
+<!--                                <label for="monitorGroupSelector" class="form-label">{{ $t("Monitor Group") }}</label>-->
+<!--                                <ActionSelect-->
+<!--                                    id="monitorGroupSelector"-->
+<!--                                    v-model="monitor.parent"-->
+<!--                                    :action-aria-label="$t('openModalTo', 'setup a new monitor group')"-->
+<!--                                    :options="parentMonitorOptionsList"-->
+<!--                                    :disabled="sortedGroupMonitorList.length === 0 && draftGroupName == null"-->
+<!--                                    :icon="'plus'"-->
+<!--                                    :action="() => $refs.createGroupDialog.show()"-->
+<!--                                />-->
+<!--                            </div>-->
 
                             <!-- Description -->
                             <div class="my-3">
@@ -678,99 +675,99 @@
                                     <textarea id="headers" v-model="monitor.headers" class="form-control" :placeholder="headersPlaceholder"></textarea>
                                 </div>
 
-                                <!-- HTTP Auth -->
-                                <h4 class="mt-5 mb-2">{{ $t("Authentication") }}</h4>
+<!--                                &lt;!&ndash; HTTP Auth &ndash;&gt;-->
+<!--                                <h4 class="mt-5 mb-2">{{ $t("Authentication") }}</h4>-->
 
-                                <!-- Method -->
-                                <div class="my-3">
-                                    <label for="method" class="form-label">{{ $t("Method") }}</label>
-                                    <select id="method" v-model="monitor.authMethod" class="form-select">
-                                        <option :value="null">
-                                            {{ $t("None") }}
-                                        </option>
-                                        <option value="basic">
-                                            {{ $t("HTTP Basic Auth") }}
-                                        </option>
-                                        <option value="oauth2-cc">
-                                            {{ $t("OAuth2: Client Credentials") }}
-                                        </option>
-                                        <option value="ntlm">
-                                            NTLM
-                                        </option>
-                                        <option value="mtls">
-                                            mTLS
-                                        </option>
-                                    </select>
-                                </div>
-                                <template v-if="monitor.authMethod && monitor.authMethod !== null ">
-                                    <template v-if="monitor.authMethod === 'mtls' ">
-                                        <div class="my-3">
-                                            <label for="tls-cert" class="form-label">{{ $t("Cert") }}</label>
-                                            <textarea id="tls-cert" v-model="monitor.tlsCert" class="form-control" :placeholder="$t('Cert body')" required></textarea>
-                                        </div>
-                                        <div class="my-3">
-                                            <label for="tls-key" class="form-label">{{ $t("Key") }}</label>
-                                            <textarea id="tls-key" v-model="monitor.tlsKey" class="form-control" :placeholder="$t('Key body')" required></textarea>
-                                        </div>
-                                        <div class="my-3">
-                                            <label for="tls-ca" class="form-label">{{ $t("CA") }}</label>
-                                            <textarea id="tls-ca" v-model="monitor.tlsCa" class="form-control" :placeholder="$t('Server CA')"></textarea>
-                                        </div>
-                                    </template>
-                                    <template v-else-if="monitor.authMethod === 'oauth2-cc' ">
-                                        <div class="my-3">
-                                            <label for="oauth_auth_method" class="form-label">{{ $t("Authentication Method") }}</label>
-                                            <select id="oauth_auth_method" v-model="monitor.oauth_auth_method" class="form-select">
-                                                <option value="client_secret_basic">
-                                                    {{ $t("Authorization Header") }}
-                                                </option>
-                                                <option value="client_secret_post">
-                                                    {{ $t("Form Data Body") }}
-                                                </option>
-                                            </select>
-                                        </div>
-                                        <div class="my-3">
-                                            <label for="oauth_token_url" class="form-label">{{ $t("OAuth Token URL") }}</label>
-                                            <input id="oauth_token_url" v-model="monitor.oauth_token_url" type="text" class="form-control" :placeholder="$t('OAuth Token URL')" required>
-                                        </div>
-                                        <div class="my-3">
-                                            <label for="oauth_client_id" class="form-label">{{ $t("Client ID") }}</label>
-                                            <input id="oauth_client_id" v-model="monitor.oauth_client_id" type="text" class="form-control" :placeholder="$t('Client ID')" required>
-                                        </div>
-                                        <template v-if="monitor.oauth_auth_method === 'client_secret_post' || monitor.oauth_auth_method === 'client_secret_basic'">
-                                            <div class="my-3">
-                                                <label for="oauth_client_secret" class="form-label">{{ $t("Client Secret") }}</label>
-                                                <input id="oauth_client_secret" v-model="monitor.oauth_client_secret" type="password" class="form-control" :placeholder="$t('Client Secret')" required>
-                                            </div>
-                                            <div class="my-3">
-                                                <label for="oauth_scopes" class="form-label">{{ $t("OAuth Scope") }}</label>
-                                                <input id="oauth_scopes" v-model="monitor.oauth_scopes" type="text" class="form-control" :placeholder="$t('Optional: Space separated list of scopes')">
-                                            </div>
-                                        </template>
-                                    </template>
-                                    <template v-else>
-                                        <div class="my-3">
-                                            <label for="basicauth-user" class="form-label">{{ $t("Username") }}</label>
-                                            <input id="basicauth-user" v-model="monitor.basic_auth_user" type="text" class="form-control" :placeholder="$t('Username')">
-                                        </div>
+<!--                                &lt;!&ndash; Method &ndash;&gt;-->
+<!--                                <div class="my-3">-->
+<!--                                    <label for="method" class="form-label">{{ $t("Method") }}</label>-->
+<!--                                    <select id="method" v-model="monitor.authMethod" class="form-select">-->
+<!--                                        <option :value="null">-->
+<!--                                            {{ $t("None") }}-->
+<!--                                        </option>-->
+<!--                                        <option value="basic">-->
+<!--                                            {{ $t("HTTP Basic Auth") }}-->
+<!--                                        </option>-->
+<!--                                        <option value="oauth2-cc">-->
+<!--                                            {{ $t("OAuth2: Client Credentials") }}-->
+<!--                                        </option>-->
+<!--                                        <option value="ntlm">-->
+<!--                                            NTLM-->
+<!--                                        </option>-->
+<!--                                        <option value="mtls">-->
+<!--                                            mTLS-->
+<!--                                        </option>-->
+<!--                                    </select>-->
+<!--                                </div>-->
+<!--                                <template v-if="monitor.authMethod && monitor.authMethod !== null ">-->
+<!--                                    <template v-if="monitor.authMethod === 'mtls' ">-->
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="tls-cert" class="form-label">{{ $t("Cert") }}</label>-->
+<!--                                            <textarea id="tls-cert" v-model="monitor.tlsCert" class="form-control" :placeholder="$t('Cert body')" required></textarea>-->
+<!--                                        </div>-->
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="tls-key" class="form-label">{{ $t("Key") }}</label>-->
+<!--                                            <textarea id="tls-key" v-model="monitor.tlsKey" class="form-control" :placeholder="$t('Key body')" required></textarea>-->
+<!--                                        </div>-->
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="tls-ca" class="form-label">{{ $t("CA") }}</label>-->
+<!--                                            <textarea id="tls-ca" v-model="monitor.tlsCa" class="form-control" :placeholder="$t('Server CA')"></textarea>-->
+<!--                                        </div>-->
+<!--                                    </template>-->
+<!--                                    <template v-else-if="monitor.authMethod === 'oauth2-cc' ">-->
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="oauth_auth_method" class="form-label">{{ $t("Authentication Method") }}</label>-->
+<!--                                            <select id="oauth_auth_method" v-model="monitor.oauth_auth_method" class="form-select">-->
+<!--                                                <option value="client_secret_basic">-->
+<!--                                                    {{ $t("Authorization Header") }}-->
+<!--                                                </option>-->
+<!--                                                <option value="client_secret_post">-->
+<!--                                                    {{ $t("Form Data Body") }}-->
+<!--                                                </option>-->
+<!--                                            </select>-->
+<!--                                        </div>-->
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="oauth_token_url" class="form-label">{{ $t("OAuth Token URL") }}</label>-->
+<!--                                            <input id="oauth_token_url" v-model="monitor.oauth_token_url" type="text" class="form-control" :placeholder="$t('OAuth Token URL')" required>-->
+<!--                                        </div>-->
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="oauth_client_id" class="form-label">{{ $t("Client ID") }}</label>-->
+<!--                                            <input id="oauth_client_id" v-model="monitor.oauth_client_id" type="text" class="form-control" :placeholder="$t('Client ID')" required>-->
+<!--                                        </div>-->
+<!--                                        <template v-if="monitor.oauth_auth_method === 'client_secret_post' || monitor.oauth_auth_method === 'client_secret_basic'">-->
+<!--                                            <div class="my-3">-->
+<!--                                                <label for="oauth_client_secret" class="form-label">{{ $t("Client Secret") }}</label>-->
+<!--                                                <input id="oauth_client_secret" v-model="monitor.oauth_client_secret" type="password" class="form-control" :placeholder="$t('Client Secret')" required>-->
+<!--                                            </div>-->
+<!--                                            <div class="my-3">-->
+<!--                                                <label for="oauth_scopes" class="form-label">{{ $t("OAuth Scope") }}</label>-->
+<!--                                                <input id="oauth_scopes" v-model="monitor.oauth_scopes" type="text" class="form-control" :placeholder="$t('Optional: Space separated list of scopes')">-->
+<!--                                            </div>-->
+<!--                                        </template>-->
+<!--                                    </template>-->
+<!--                                    <template v-else>-->
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="basicauth-user" class="form-label">{{ $t("Username") }}</label>-->
+<!--                                            <input id="basicauth-user" v-model="monitor.basic_auth_user" type="text" class="form-control" :placeholder="$t('Username')">-->
+<!--                                        </div>-->
 
-                                        <div class="my-3">
-                                            <label for="basicauth-pass" class="form-label">{{ $t("Password") }}</label>
-                                            <input id="basicauth-pass" v-model="monitor.basic_auth_pass" type="password" autocomplete="new-password" class="form-control" :placeholder="$t('Password')">
-                                        </div>
-                                        <template v-if="monitor.authMethod === 'ntlm' ">
-                                            <div class="my-3">
-                                                <label for="ntlm-domain" class="form-label">{{ $t("Domain") }}</label>
-                                                <input id="ntlm-domain" v-model="monitor.authDomain" type="text" class="form-control" :placeholder="$t('Domain')">
-                                            </div>
+<!--                                        <div class="my-3">-->
+<!--                                            <label for="basicauth-pass" class="form-label">{{ $t("Password") }}</label>-->
+<!--                                            <input id="basicauth-pass" v-model="monitor.basic_auth_pass" type="password" autocomplete="new-password" class="form-control" :placeholder="$t('Password')">-->
+<!--                                        </div>-->
+<!--                                        <template v-if="monitor.authMethod === 'ntlm' ">-->
+<!--                                            <div class="my-3">-->
+<!--                                                <label for="ntlm-domain" class="form-label">{{ $t("Domain") }}</label>-->
+<!--                                                <input id="ntlm-domain" v-model="monitor.authDomain" type="text" class="form-control" :placeholder="$t('Domain')">-->
+<!--                                            </div>-->
 
-                                            <div class="my-3">
-                                                <label for="ntlm-workstation" class="form-label">{{ $t("Workstation") }}</label>
-                                                <input id="ntlm-workstation" v-model="monitor.authWorkstation" type="text" class="form-control" :placeholder="$t('Workstation')">
-                                            </div>
-                                        </template>
-                                    </template>
-                                </template>
+<!--                                            <div class="my-3">-->
+<!--                                                <label for="ntlm-workstation" class="form-label">{{ $t("Workstation") }}</label>-->
+<!--                                                <input id="ntlm-workstation" v-model="monitor.authWorkstation" type="text" class="form-control" :placeholder="$t('Workstation')">-->
+<!--                                            </div>-->
+<!--                                        </template>-->
+<!--                                    </template>-->
+<!--                                </template>-->
                             </template>
 
                             <!-- gRPC Options -->
@@ -831,9 +828,9 @@
             </form>
 
             <NotificationDialog ref="notificationDialog" @added="addedNotification" />
-            <DockerHostDialog ref="dockerHostDialog" @added="addedDockerHost" />
-            <ProxyDialog ref="proxyDialog" @added="addedProxy" />
-            <CreateGroupDialog ref="createGroupDialog" @added="addedDraftGroup" />
+<!--            <DockerHostDialog ref="dockerHostDialog" @added="addedDockerHost" />-->
+<!--            <ProxyDialog ref="proxyDialog" @added="addedProxy" />-->
+<!--            <CreateGroupDialog ref="createGroupDialog" @added="addedDraftGroup" />-->
         </div>
     </transition>
 </template>
@@ -1455,7 +1452,7 @@ message HealthCheckResponse {
 
                 });
             } else {
-                await this.$refs.tagsManager.submit(this.monitor.id);
+                await this.$refs.tagsManager.submit(+this.$route.params.id);
 
                 this.$root.getSocket().emit("editMonitor", this.monitor, (res) => {
                     this.processing = false;

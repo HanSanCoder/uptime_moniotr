@@ -213,7 +213,7 @@ export default {
             });
 
             socket.on("avgPing", (monitorID, data) => {
-                this.avgPingList[monitorID] = data;
+                this.avgPingList[data.monitorID] = data.avgPing;
             });
 
             socket.on("uptime", (monitorID, type, data) => {
