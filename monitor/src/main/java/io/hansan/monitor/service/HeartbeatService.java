@@ -104,4 +104,27 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
         result.setMonitorID(monitorId);
         return result;
     }
+
+    /**
+     * 获取指定时间段内的心跳数据
+     */
+    public Result getCustomPeriodHeartbeats(Integer monitorId, Integer newPeriod) {
+
+        Result result = new Result();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.minusHours(newPeriod);
+
+        // 获取指定时间段内的心跳记录
+        LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
+                .eq(HeartbeatModel::getMonitorId, monitorId)
+                .ge(HeartbeatModel::getTime, startTime)
+                .le(HeartbeatModel::getTime, now)
+                .orderByAsc(HeartbeatModel::getTime);
+
+        List<HeartbeatModel> heartbeats = this.list(wrapper);
+
+        result.setOk(true);
+        result.setBeats(heartbeats);
+        return result;
+    }
 }

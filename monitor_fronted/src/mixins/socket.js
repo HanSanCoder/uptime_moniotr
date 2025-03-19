@@ -627,7 +627,7 @@ export default {
          * @param {socketCB} callback
          */
         getMonitorBeats(monitorID, period, callback) {
-            socket.emit("getMonitorBeats", monitorID, period, callback);
+            socket.emit("getMonitorBeats", [monitorID, period], callback);
         }
     },
 
@@ -643,8 +643,8 @@ export default {
 
         lastHeartbeatList() {
             let result = {};
+            let index = 0;
             for (let monitorID in this.heartbeatList) {
-                let index = this.heartbeatList[monitorID].length - 1;
                 result[monitorID] = this.heartbeatList[monitorID][index];
             }
 

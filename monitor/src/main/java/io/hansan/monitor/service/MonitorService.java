@@ -150,4 +150,36 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
         result.setMonitor(monitor);
         return result;
     }
+
+    public Result pauseMonitor(Integer monitorId) {
+        MonitorModel monitor = monitorMapper.selectById(monitorId);
+        monitor.setActive(false);
+        boolean updated = this.updateById(monitor);
+        Result result = new Result();
+        if (updated) {
+            result.setOk(true);
+            result.setMsg("暂停监控成功");
+            result.setMonitor(monitor);
+            return result;
+        }
+        result.setOk(false);
+        result.setMsg("暂停监控失败");
+        return result;
+    }
+
+    public Result resumeMonitor(Integer monitorId) {
+        MonitorModel monitor = monitorMapper.selectById(monitorId);
+        monitor.setActive(true);
+        boolean updated = this.updateById(monitor);
+        Result result = new Result();
+        if (updated) {
+            result.setOk(true);
+            result.setMsg("恢复监控成功");
+            result.setMonitor(monitor);
+            return result;
+        }
+        result.setOk(false);
+        result.setMsg("恢复监控失败");
+        return result;
+    }
 }

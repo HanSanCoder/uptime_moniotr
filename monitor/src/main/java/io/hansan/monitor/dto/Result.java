@@ -1,5 +1,6 @@
 package io.hansan.monitor.dto;
 
+import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.model.MonitorModel;
 import io.hansan.monitor.model.Tag;
 import lombok.Builder;
@@ -25,4 +26,5 @@ public class Result {
     private String data;
     private MonitorModel monitor;
     private double avgPing;
+    private List<HeartbeatModel> beats;
 }

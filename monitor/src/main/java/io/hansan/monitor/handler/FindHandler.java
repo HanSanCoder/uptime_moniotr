@@ -29,6 +29,7 @@ public class FindHandler {
     private MaintenanceService maintenanceService;
     @Inject
     private TagService tagService;
+
     /**
      * 处理添加监控事件
      */
@@ -53,12 +54,14 @@ public class FindHandler {
             ack.sendAckData(result);
         };
     }
+
     public DataListener<Integer> getMonitor() {
         return (client, data, ack) -> {
             Result result = monitorService.getByMonitorId(data);
             ack.sendAckData(result);
         };
     }
+
     // 处理获取监控详情事件
     public DataListener<Integer> getMonitorDetailListener() {
         return (client, userId, ack) -> {
@@ -89,4 +92,31 @@ public class FindHandler {
         };
     }
 
+    public DataListener<Integer> pauseMonitor() {
+        return (client, data, ack) -> {
+            Result result = monitorService.pauseMonitor(data);
+            List<MonitorModel> monitorList = monitorService.getMonitorsByUserId(1);
+            client.sendEvent("monitorList", monitorList);
+            ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<Integer> resumeMonitor() {
+        return (client, data, ack) -> {
+            Result result = monitorService.resumeMonitor(data);
+            List<MonitorModel> monitorList = monitorService.getMonitorsByUserId(1);
+            client.sendEvent("monitorList", monitorList);
+            ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<Object[]> getMonitorBeats() {
+        return (client, data, ack) -> {
+            Integer monitorId = Integer.valueOf(String.valueOf(data[0]));
+            Integer newPeriod = Integer.valueOf(String.valueOf(data[1]));
+            Result monitor = heartbeatService.getCustomPeriodHeartbeats(monitorId, newPeriod);
+            ack.sendAckData(monitor);
+        };
+    }
 }
+

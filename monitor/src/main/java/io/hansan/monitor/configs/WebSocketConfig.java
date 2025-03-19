@@ -66,6 +66,9 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("deleteMonitor", Integer.class, deleteHandler.deleteMonitor());
         server.addEventListener("editMonitor", MonitorModel.class, findHandler.editMonitor());
         server.addEventListener("getMonitor", Integer.class, findHandler.getMonitor());
+        server.addEventListener("pauseMonitor", Integer.class, findHandler.pauseMonitor());
+        server.addEventListener("resumeMonitor", Integer.class, findHandler.resumeMonitor());
+        server.addEventListener("getMonitorBeats", Object[].class, findHandler.getMonitorBeats());
 
         server.start();
     }
