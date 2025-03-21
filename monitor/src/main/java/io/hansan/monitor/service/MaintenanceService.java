@@ -6,6 +6,7 @@ package io.hansan.monitor.service;
  * @Description：TODO
  */
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.mapper.MaintenanceMapper;
 import io.hansan.monitor.model.Maintenance;
@@ -15,7 +16,7 @@ import org.noear.solon.annotation.Inject;
 import java.util.List;
 
 @Component
-public class MaintenanceService {
+public class MaintenanceService extends ServiceImpl<MaintenanceMapper, Maintenance> {
 
     @Inject
     private MaintenanceMapper maintenanceMapper;
@@ -38,9 +39,10 @@ public class MaintenanceService {
      * 插入新的维护记录
      */
     public Result add(Maintenance maintenance) {
-        int insert = maintenanceMapper.insert(maintenance);
+        boolean save = this.save(maintenance);
         Result result = new Result();
-        if (insert > 0) {
+        if (save) {
+            result.setMaintenanceID(maintenance.getId());
             result.setOk(true);
             result.setMsg("添加维护记录成功");
         } else {
@@ -66,5 +68,57 @@ public class MaintenanceService {
 
     public void addMonitorMaintenance(Integer maintenanceId, Integer monitorId) {
         maintenanceMapper.addMonitorMaintenance(maintenanceId, monitorId);
+    }
+
+    public Result pauseMaintenance(Integer maintenanceId) {
+        Maintenance maintenance = this.getById(maintenanceId);
+        maintenance.setActive(false);
+        this.updateById(maintenance);
+        Result result = new Result();
+        result.setOk(true);
+        result.setMsg("暂停维护记录成功");
+        return result;
+    }
+
+    public Result resumeMaintenance(Integer maintenanceId) {
+        Maintenance maintenance = this.getById(maintenanceId);
+        maintenance.setActive(true);
+        this.updateById(maintenance);
+        Result result = new Result();
+        result.setOk(true);
+        result.setMsg("恢复维护记录成功");
+        return result;
+    }
+
+    public Result deleteMaintenance(Integer maintenanceId) {
+        boolean remove = this.removeById(maintenanceId);
+        Result result = new Result();
+        if (remove) {
+            result.setOk(true);
+            result.setMsg("删除维护记录成功");
+        } else {
+            result.setOk(false);
+            result.setMsg("删除维护记录失败");
+        }
+        return result;
+    }
+
+    public List<Integer> findMonitorIdByMaintenanceId(Integer maintenanceId) {
+        return maintenanceMapper.findMonitorIdByMaintenanceId(maintenanceId);
+    }
+
+    public Result editMaintenance(Maintenance data) {
+        boolean update = this.updateById(data);
+        maintenanceMapper.deleteMonitorMaintenance(data.getId());
+        Result result = new Result();
+        if (update) {
+            result.setOk(true);
+            result.setMaintenanceID(data.getId());
+            result.setMsg("编辑维护记录成功");
+        } else {
+            result.setOk(false);
+            result.setMsg("编辑维护记录失败");
+        }
+        return result;
     }
 }

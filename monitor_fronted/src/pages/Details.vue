@@ -415,7 +415,7 @@ export default {
         clearEvents() {
             this.$root.clearEvents(this.monitor.id, (res) => {
                 if (! res.ok) {
-                    toast.error(res.msg);
+                    toast.error("清除事件数据失败");
                 }
             });
         },
@@ -424,7 +424,7 @@ export default {
         clearHeartbeats() {
             this.$root.clearHeartbeats(this.monitor.id, (res) => {
                 if (! res.ok) {
-                    toast.error(res.msg);
+                    toast.error("清除心跳数据失败");
                 }
             });
         },

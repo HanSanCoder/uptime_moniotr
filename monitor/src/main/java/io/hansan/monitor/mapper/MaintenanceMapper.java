@@ -21,12 +21,6 @@ public interface MaintenanceMapper extends BaseMapper<Maintenance> {
     @Select("SELECT * FROM maintenance WHERE user_id = #{userId}")
     List<Maintenance> findByUserId(Integer userId);
 
-    @Insert("INSERT INTO maintenance (title, description, strategy, interval_day, active, start_date, end_date, " +
-            "start_time, end_time, weekdays, days_of_month, cron, duration, timezone, user_id) " +
-            "VALUES (#{title}, #{description}, #{strategy}, #{intervalDay}, #{active}, #{startDate}, #{endDate}, " +
-            "#{startTime}, #{endTime}, #{weekdays}, #{daysOfMonth}, #{cron}, #{duration}, #{timezone}, #{userId})")
-    @Options(useGeneratedKeys = true, keyProperty = "id")
-    int insert(Maintenance maintenance);
 
     @Update("UPDATE maintenance SET title = #{title}, description = #{description}, strategy = #{strategy}, " +
             "interval_day = #{intervalDay}, active = #{active}, start_date = #{startDate}, end_date = #{endDate}, " +
@@ -42,4 +36,10 @@ public interface MaintenanceMapper extends BaseMapper<Maintenance> {
 
     @Insert("INSERT INTO monitor_maintenance (maintenance_id, monitor_id) VALUES (#{maintenanceId}, #{monitorId})")
     void addMonitorMaintenance(Integer maintenanceId, Integer monitorId);
+
+    @Select("SELECT monitor_id FROM monitor_maintenance WHERE maintenance_id = #{maintenanceId}")
+    List<Integer> findMonitorIdByMaintenanceId(Integer maintenanceId);
+
+    @Delete("DELETE FROM monitor_maintenance WHERE maintenance_id = #{maintenanceId}")
+    void deleteMonitorMaintenance(Long maintenanceId);
 }

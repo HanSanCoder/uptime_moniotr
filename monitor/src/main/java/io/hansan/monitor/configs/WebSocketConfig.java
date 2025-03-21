@@ -54,12 +54,14 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("getTags", Void.class, findHandler.getTags());
         server.addEventListener("add", MonitorDTO.class, createHandler.addMonitor());
         server.addEventListener("addMaintenance", Maintenance.class, createHandler.addMaintenance());
+        server.addEventListener("getMaintenance", Integer.class, findHandler.getMaintenance());
         server.addEventListener("addTag", Tag.class, createHandler.addTag());
         server.addEventListener("deleteTag", Integer.class, deleteHandler.deleteTag());
         server.addEventListener("addMonitorTag", Object[].class, createHandler.addMonitorTag());
         server.addEventListener("deleteMonitorTag", Object[].class, deleteHandler.deleteMonitorTag());
         server.addEventListener("getMonitorMaintenance", Integer.class, findHandler.getMonitorMaintenance());
         server.addEventListener("addMonitorMaintenance", Object[].class, createHandler.addMonitorMaintenance());
+        server.addEventListener("getMaintenanceList", Void.class, findHandler.getMaintenanceList());
         server.addEventListener("setSettings", Integer.class, createHandler.setSettings());
         server.addEventListener("getSettings", Integer.class, findHandler.getSettings());
         server.addEventListener("editTag", Tag.class, findHandler.editTag());
@@ -69,6 +71,12 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("pauseMonitor", Integer.class, findHandler.pauseMonitor());
         server.addEventListener("resumeMonitor", Integer.class, findHandler.resumeMonitor());
         server.addEventListener("getMonitorBeats", Object[].class, findHandler.getMonitorBeats());
+        server.addEventListener("clearHeartbeats", Integer.class, deleteHandler.clearHeartbeats());
+        server.addEventListener("clearEvents", Integer.class, deleteHandler.clearEvents());
+        server.addEventListener("deleteMaintenance", Integer.class, deleteHandler.deleteMaintenance());
+        server.addEventListener("pauseMaintenance", Integer.class, findHandler.pauseMaintenance());
+        server.addEventListener("resumeMaintenance", Integer.class, findHandler.resumeMaintenance());
+        server.addEventListener("editMaintenance", Maintenance.class, findHandler.editMaintenance());
 
         server.start();
     }

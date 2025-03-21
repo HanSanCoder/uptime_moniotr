@@ -1,6 +1,7 @@
 package io.hansan.monitor.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.LambdaUpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.model.HeartbeatModel;
@@ -126,5 +127,31 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
         result.setOk(true);
         result.setBeats(heartbeats);
         return result;
+    }
+
+    public Result removeByMonitorId(Integer data) {
+        LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
+                .eq(HeartbeatModel::getMonitorId, data);
+        boolean removed = this.remove(wrapper);
+        Result result = new Result();
+        result.setOk(removed);
+        return result;
+    }
+
+    public Result removeEventsByMonitorId(Integer data) {
+        LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
+                .eq(HeartbeatModel::getMonitorId, data)
+                .eq(HeartbeatModel::getImportant, true);
+        boolean removed = this.remove(wrapper);
+        Result result = new Result();
+        result.setOk(removed);
+        return result;
+    }
+
+    public void updateStatue(Integer monitorId, int statue) {
+        LambdaUpdateWrapper<HeartbeatModel> updateWrapper = new LambdaUpdateWrapper<HeartbeatModel>()
+                .eq(HeartbeatModel::getMonitorId, monitorId)
+                .set(HeartbeatModel::getStatus, statue);
+        this.update(updateWrapper);
     }
 }

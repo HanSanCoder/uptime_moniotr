@@ -509,7 +509,7 @@ export default {
          * @param {socketCB} callback
          */
         addMonitorMaintenance(maintenanceID, monitors, callback) {
-            socket.emit("addMonitorMaintenance", maintenanceID, monitors, callback);
+            socket.emit("addMonitorMaintenance", [maintenanceID, monitors], callback);
         },
 
         /**
@@ -711,7 +711,7 @@ export default {
                 // Use optional chaining to safely access nested properties
                 let beat = this.$root.lastHeartbeatList?.[monitorID];
                 let monitor = this.$root.monitorList[monitorID];
-
+                if (beat.status === MAINTENANCE) monitor.active = true;
                 if (monitor && !monitor.active) {
                     result.pause++;
                 } else if (beat) {

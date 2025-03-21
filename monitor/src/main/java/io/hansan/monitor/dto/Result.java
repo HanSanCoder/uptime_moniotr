@@ -1,6 +1,7 @@
 package io.hansan.monitor.dto;
 
 import io.hansan.monitor.model.HeartbeatModel;
+import io.hansan.monitor.model.Maintenance;
 import io.hansan.monitor.model.MonitorModel;
 import io.hansan.monitor.model.Tag;
 import lombok.Builder;
@@ -26,5 +27,8 @@ public class Result {
     private String data;
     private MonitorModel monitor;
     private double avgPing;
+    private List<Maintenance> maintenances;
+    private Maintenance maintenance;
     private List<HeartbeatModel> beats;
+    private Long maintenanceID;
 }

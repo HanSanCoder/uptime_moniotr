@@ -55,7 +55,7 @@ export default {
         async submit() {
             this.processing = true;
 
-            this.$root.getSocket().emit("addStatusPage", this.title, this.slug, (res) => {
+            this.$root.getSocket().emit("addStatusPage", [this.title, this.slug], (res) => {
                 this.processing = false;
 
                 if (res.ok) {

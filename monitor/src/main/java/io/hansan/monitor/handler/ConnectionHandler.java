@@ -33,8 +33,6 @@ public class ConnectionHandler implements ConnectListener {
     private HeartbeatService heartbeatService;
     @Inject
     private MaintenanceService maintenanceService;
-    @Inject
-    private StatusPageService statusPageService;
     @Override
     public void onConnect(SocketIOClient client) {
         log.info("客户端连接 - 会话ID: {}, 远程地址: {}",
@@ -56,7 +54,6 @@ public class ConnectionHandler implements ConnectListener {
 //        client.sendEvent("heartbeat", heartbeatSocketHandler.heartbeatListener());
         // 发送维护列表
         client.sendEvent("maintenanceList", maintenanceService.findByUserId(1));
-        client.sendEvent("statusPageList", statusPageService.listAll());
 
     }
 }

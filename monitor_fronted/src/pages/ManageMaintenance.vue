@@ -28,10 +28,10 @@
                         ></div>
                         <div class="info">
                             <div class="title">{{ item.title }}</div>
-                            <div v-if="false">{{ item.description }}</div>
-                            <div class="status">
-                                {{ $t("maintenanceStatus-" + item.status) }}
-                            </div>
+                            <div>{{ item.description }}</div>
+<!--                            <div class="status">-->
+<!--                                {{ $t("maintenanceStatus-" + item.status) }}-->
+<!--                            </div>-->
 
                             <MaintenanceTime :maintenance="item" />
                         </div>
@@ -61,9 +61,9 @@
                 </div>
             </div>
 
-            <div class="text-center mt-3" style="font-size: 13px;">
-                <a href="https://github.com/louislam/uptime-kuma/wiki/Maintenance" target="_blank">{{ $t("Learn More") }}</a>
-            </div>
+<!--            <div class="text-center mt-3" style="font-size: 13px;">-->
+<!--                <a href="https://github.com/louislam/uptime-kuma/wiki/Maintenance" target="_blank">{{ $t("Learn More") }}</a>-->
+<!--            </div>-->
 
             <Confirm ref="confirmPause" :yes-text="$t('Yes')" :no-text="$t('No')" @yes="pauseMaintenance">
                 {{ $t("pauseMaintenanceMsg") }}
@@ -155,6 +155,7 @@ export default {
         deleteMaintenance() {
             this.$root.deleteMaintenance(this.selectedMaintenanceID, (res) => {
                 if (res.ok) {
+                    this.$root.getMaintenanceList();
                     toast.success(res.msg);
                     this.$router.push("/maintenance");
                 } else {
@@ -176,6 +177,7 @@ export default {
          */
         pauseMaintenance() {
             this.$root.getSocket().emit("pauseMaintenance", this.selectedMaintenanceID, (res) => {
+                this.$root.getMaintenanceList();
                 this.$root.toastRes(res);
             });
         },
@@ -185,6 +187,7 @@ export default {
          */
         resumeMaintenance(id) {
             this.$root.getSocket().emit("resumeMaintenance", id, (res) => {
+                this.$root.getMaintenanceList();
                 this.$root.toastRes(res);
             });
         },

@@ -49,58 +49,56 @@
                             </div>
 
                             <!-- Status pages to display maintenance info on -->
-                            <h2 class="mt-5">{{ $t("Status Pages") }}</h2>
-                            {{ $t("affectedStatusPages") }}
+<!--                            <h2 class="mt-5">{{ $t("Status Pages") }}</h2>-->
+<!--                            {{ $t("affectedStatusPages") }}-->
 
-                            <div class="my-3">
-                                <!-- Show on all pages -->
-                                <div class="form-check mb-2">
-                                    <input
-                                        id="show-on-all-pages" v-model="showOnAllPages" class="form-check-input"
-                                        type="checkbox"
-                                    >
-                                    <label class="form-check-label" for="show-powered-by">{{
-                                        $t("All Status Pages")
-                                    }}</label>
-                                </div>
+<!--                            <div class="my-3">-->
+<!--                                &lt;!&ndash; Show on all pages &ndash;&gt;-->
+<!--                                <div class="form-check mb-2">-->
+<!--                                    <input-->
+<!--                                        id="show-on-all-pages" v-model="showOnAllPages" class="form-check-input"-->
+<!--                                        type="checkbox"-->
+<!--                                    >-->
+<!--                                    <label class="form-check-label" for="show-powered-by">{{-->
+<!--                                        $t("All Status Pages")-->
+<!--                                    }}</label>-->
+<!--                                </div>-->
 
-                                <div v-if="!showOnAllPages">
-                                    <VueMultiselect
-                                        id="selected_status_pages"
-                                        v-model="selectedStatusPages"
-                                        :options="selectedStatusPagesOptions"
-                                        track-by="id"
-                                        label="name"
-                                        :multiple="true"
-                                        :close-on-select="false"
-                                        :clear-on-select="false"
-                                        :preserve-search="true"
-                                        :placeholder="$t('Select status pages...')"
-                                        :preselect-first="false"
-                                        :max-height="600"
-                                        :taggable="false"
-                                    ></VueMultiselect>
-                                </div>
-                            </div>
+<!--                                <div v-if="!showOnAllPages">-->
+<!--                                    <VueMultiselect-->
+<!--                                        id="selected_status_pages"-->
+<!--                                        v-model="selectedStatusPages"-->
+<!--                                        :options="selectedStatusPagesOptions"-->
+<!--                                        track-by="id"-->
+<!--                                        label="name"-->
+<!--                                        :multiple="true"-->
+<!--                                        :close-on-select="false"-->
+<!--                                        :clear-on-select="false"-->
+<!--                                        :preserve-search="true"-->
+<!--                                        :placeholder="$t('Select status pages...')"-->
+<!--                                        :preselect-first="false"-->
+<!--                                        :max-height="600"-->
+<!--                                        :taggable="false"-->
+<!--                                    ></VueMultiselect>-->
+<!--                                </div>-->
+<!--                            </div>-->
 
                             <h2 class="mt-5">{{ $t("Date and Time") }}</h2>
 
                             <!-- Strategy -->
-                            <div class="my-3">
-                                <label for="strategy" class="form-label">{{ $t("Strategy") }}</label>
-                                <select id="strategy" v-model="maintenance.strategy" class="form-select">
-                                    <option value="manual">{{ $t("strategyManual") }}</option>
-                                    <option value="single">{{ $t("Single Maintenance Window") }}</option>
-                                    <option value="cron">{{ $t("cronExpression") }}</option>
-                                    <option value="recurring-interval">{{ $t("Recurring") }} - {{ $t("recurringInterval") }}</option>
-                                    <option value="recurring-weekday">{{ $t("Recurring") }} - {{ $t("dayOfWeek") }}</option>
-                                    <option value="recurring-day-of-month">{{ $t("Recurring") }} - {{ $t("dayOfMonth") }}</option>
-                                </select>
-                            </div>
+<!--                            <div class="my-3">-->
+<!--                                <label for="strategy" class="form-label">{{ $t("Strategy") }}</label>-->
+<!--                                <select id="strategy" v-model="maintenance.strategy" class="form-select">-->
+<!--                                    <option value="manual">{{ $t("strategyManual") }}</option>-->
+<!--                                    <option value="single">{{ $t("Single Maintenance Window") }}</option>-->
+<!--                                    <option value="cron">{{ $t("cronExpression") }}</option>-->
+<!--                                    <option value="recurring-interval">{{ $t("Recurring") }} - {{ $t("recurringInterval") }}</option>-->
+<!--                                    <option value="recurring-weekday">{{ $t("Recurring") }} - {{ $t("dayOfWeek") }}</option>-->
+<!--                                    <option value="recurring-day-of-month">{{ $t("Recurring") }} - {{ $t("dayOfMonth") }}</option>-->
+<!--                                </select>-->
+<!--                            </div>-->
 
-                            <!-- Single Maintenance Window -->
-                            <template v-if="maintenance.strategy === 'single'">
-                            </template>
+
 
                             <template v-if="maintenance.strategy === 'cron'">
                                 <!-- Cron -->
@@ -184,55 +182,34 @@
                                 </div>
                             </template>
 
-                            <template v-if="maintenance.strategy === 'recurring-interval' || maintenance.strategy === 'recurring-weekday' || maintenance.strategy === 'recurring-day-of-month'">
-                                <!-- Maintenance Time Window of a Day -->
-                                <div class="my-3">
-                                    <label class="form-label">{{ $t("Maintenance Time Window of a Day") }}</label>
-                                    <Datepicker
-                                        v-model="maintenance.timeRange"
-                                        :dark="$root.isDark"
-                                        timePicker
-                                        disableTimeRangeValidation range
-                                    />
-                                </div>
-                            </template>
+<!--                            <template v-if="maintenance.strategy === 'recurring-interval' || maintenance.strategy === 'recurring-weekday' || maintenance.strategy === 'recurring-day-of-month'">-->
+<!--                                &lt;!&ndash; Maintenance Time Window of a Day &ndash;&gt;-->
+<!--                                <div class="my-3">-->
+<!--                                    <label class="form-label">{{ $t("Maintenance Time Window of a Day") }}</label>-->
+<!--                                    <Datepicker-->
+<!--                                        v-model="maintenance.timeRange"-->
+<!--                                        :dark="$root.isDark"-->
+<!--                                        timePicker-->
+<!--                                        disableTimeRangeValidation range-->
+<!--                                    />-->
+<!--                                </div>-->
+<!--                            </template>-->
 
-                            <template v-if="maintenance.strategy === 'recurring-interval' || maintenance.strategy === 'recurring-weekday' || maintenance.strategy === 'recurring-day-of-month' || maintenance.strategy === 'cron' || maintenance.strategy === 'single'">
-                                <!-- Timezone -->
-                                <div class="mb-4">
-                                    <label for="timezone" class="form-label">
-                                        {{ $t("Timezone") }}
-                                    </label>
-                                    <select id="timezone" v-model="maintenance.timezoneOption" class="form-select">
-                                        <option value="SAME_AS_SERVER">{{ $t("sameAsServerTimezone") }}</option>
-                                        <option value="UTC">UTC</option>
-                                        <option
-                                            v-for="(timezone, index) in timezoneList"
-                                            :key="index"
-                                            :value="timezone.value"
-                                        >
-                                            {{ timezone.name }}
-                                        </option>
-                                    </select>
-                                </div>
+                            <!-- Date Range -->
+                            <div class="my-3">
 
-                                <!-- Date Range -->
-                                <div class="my-3">
-                                    <label v-if="maintenance.strategy !== 'single'" class="form-label">{{ $t("Effective Date Range") }}</label>
+                                <div class="row">
+                                    <div class="col">
+                                        <div class="mb-2">{{ $t("startDateTime") }}</div>
+                                        <input v-model="maintenance.startDate" type="datetime-local" class="form-control" :required="maintenance.strategy === 'single'">
+                                    </div>
 
-                                    <div class="row">
-                                        <div class="col">
-                                            <div class="mb-2">{{ $t("startDateTime") }}</div>
-                                            <input v-model="maintenance.dateRange[0]" type="datetime-local" class="form-control" :required="maintenance.strategy === 'single'">
-                                        </div>
-
-                                        <div class="col">
-                                            <div class="mb-2">{{ $t("endDateTime") }}</div>
-                                            <input v-model="maintenance.dateRange[1]" type="datetime-local" class="form-control" :required="maintenance.strategy === 'single'">
-                                        </div>
+                                    <div class="col">
+                                        <div class="mb-2">{{ $t("endDateTime") }}</div>
+                                        <input v-model="maintenance.endDate" type="datetime-local" class="form-control" :required="maintenance.strategy === 'single'">
                                     </div>
                                 </div>
-                            </template>
+                            </div>
                         </div>
                     </div>
 
@@ -426,22 +403,10 @@ export default {
                 this.maintenance = {
                     title: "",
                     description: "",
+                    active: true,
                     strategy: "single",
-                    active: 1,
-                    cron: "30 3 * * *",
-                    durationMinutes: 60,
-                    intervalDay: 1,
-                    dateRange: [],
-                    timeRange: [{
-                        hours: 2,
-                        minutes: 0,
-                    }, {
-                        hours: 3,
-                        minutes: 0,
-                    }],
-                    weekdays: [],
-                    daysOfMonth: [],
-                    timezoneOption: null,
+                    startDate: new Date().toISOString().slice(0, 16),
+                    endDate: new Date(Date.now() + 24 * 60 * 60 * 1000).toISOString().slice(0, 16),
                 };
             } else if (this.isEdit) {
                 this.$root.getSocket().emit("getMaintenance", this.$route.params.id, (res) => {
@@ -450,7 +415,6 @@ export default {
 
                         this.$root.getSocket().emit("getMonitorMaintenance", this.$route.params.id, (res) => {
                             if (res.ok) {
-                              console.log("返回结果了")
                                 Object.values(res.monitors).map(monitor => {
                                     this.affectedMonitors.push(this.affectedMonitorsOptions.find(item => item.id === monitor.id));
                                 });
@@ -459,22 +423,22 @@ export default {
                             }
                         });
 
-                        this.$root.getSocket().emit("getMaintenanceStatusPage", this.$route.params.id, (res) => {
-                            if (res.ok) {
-                                Object.values(res.statusPages).map(statusPage => {
-                                    this.selectedStatusPages.push({
-                                        id: statusPage.id,
-                                        name: statusPage.title
-                                    });
-                                });
-
-                                this.showOnAllPages = Object.values(res.statusPages).length === this.selectedStatusPagesOptions.length;
-                            } else {
-                                toast.error(res.msg);
-                            }
-                        });
+                        // this.$root.getSocket().emit("getMaintenanceStatusPage", this.$route.params.id, (res) => {
+                        //     if (res.ok) {
+                        //         Object.values(res.statusPages).map(statusPage => {
+                        //             this.selectedStatusPages.push({
+                        //                 id: statusPage.id,
+                        //                 name: statusPage.title
+                        //             });
+                        //         });
+                        //
+                        //         this.showOnAllPages = Object.values(res.statusPages).length === this.selectedStatusPagesOptions.length;
+                        //     } else {
+                        //         toast.error(res.msg);
+                        //     }
+                        // });
                     } else {
-                        toast.error(res.msg);
+                        toast.error("获取维修事件失败");
                     }
                 });
             }
@@ -493,12 +457,16 @@ export default {
                 this.$root.addMaintenance(this.maintenance, async (res) => {
                     if (res.ok) {
                         await this.addMonitorMaintenance(res.maintenanceID, async () => {
-                            await this.addMaintenanceStatusPage(res.maintenanceID, () => {
-                                toast.success(res.msg);
-                                this.processing = false;
-                                this.$root.getMaintenanceList();
-                                this.$router.push("/maintenance");
-                            });
+                            // await this.addMaintenanceStatusPage(res.maintenanceID, () => {
+                            //     toast.success(res);
+                            //     this.processing = false;
+                            //     this.$root.getMaintenanceList();
+                            //     this.$router.push("/maintenance");
+                            // });
+                          toast.success("添加维修事件成功");
+                          this.processing = false;
+                          this.$root.getMaintenanceList();
+                          this.$router.push("/maintenance");
                         });
                     } else {
                         toast.error(res.msg);
@@ -510,12 +478,16 @@ export default {
                 this.$root.getSocket().emit("editMaintenance", this.maintenance, async (res) => {
                     if (res.ok) {
                         await this.addMonitorMaintenance(res.maintenanceID, async () => {
-                            await this.addMaintenanceStatusPage(res.maintenanceID, () => {
-                                this.processing = false;
-                                this.$root.toastRes(res);
-                                this.init();
-                                this.$router.push("/maintenance");
-                            });
+                            // await this.addMaintenanceStatusPage(res.maintenanceID, () => {
+                            //     this.processing = false;
+                            //     this.$root.toastRes(res);
+                            //     this.init();
+                            //     this.$router.push("/maintenance");
+                            // });
+                          this.processing = false;
+                          this.$root.toastRes(res);
+                          this.init();
+                          this.$router.push("/maintenance");
                         });
                     } else {
                         this.processing = false;
@@ -532,8 +504,9 @@ export default {
          */
         async addMonitorMaintenance(maintenanceID, callback) {
             await this.$root.addMonitorMaintenance(maintenanceID, this.affectedMonitors, async (res) => {
+
                 if (!res.ok) {
-                    toast.error(res.msg);
+                    toast.error("添加监控修复事件失败");
                 } else {
                     this.$root.getMonitorList();
                 }

@@ -3,15 +3,14 @@ package io.hansan.monitor.handler;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
+import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.model.Maintenance;
 import io.hansan.monitor.model.Tag;
-import io.hansan.monitor.service.HeartbeatService;
-import io.hansan.monitor.service.MaintenanceService;
-import io.hansan.monitor.service.MonitorService;
-import io.hansan.monitor.service.TagService;
+import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -45,8 +44,8 @@ public class CreateHandler {
      */
     public DataListener<Maintenance> addMaintenance() {
         return (client, data, ack) -> {
-            maintenanceService.add(data);
-            ack.sendAckData("添加维护事件成功");
+            Result result = maintenanceService.add(data);
+            ack.sendAckData(result);
         };
     }
 
@@ -70,14 +69,26 @@ public class CreateHandler {
     public DataListener<Object[]> addMonitorMaintenance() {
         return (client, data, ack) -> {
             Integer maintenanceId = (Integer) data[0];
-            Object[] affectedMonitors = (Object[]) data[1];
+            List<?> monitorsList = (List<?>) data[1];
+            Object[] affectedMonitors = monitorsList.toArray();
 
             for (Object monitorObj : affectedMonitors) {
                 Map<String, Object> monitor = (Map<String, Object>) monitorObj;
                 Integer monitorId = ((Number) monitor.get("id")).intValue();
                 maintenanceService.addMonitorMaintenance(maintenanceId, monitorId);
+                monitorService.pauseMonitor(monitorId);
+                heartbeatService.updateStatue(monitorId, 3);
+                List<HeartbeatModel> beats = heartbeatService.getBeats(monitorId);
+                client.sendEvent("heartbeatList", monitorId, beats, true);
+                client.sendEvent("importantHeartbeatList", monitorId, heartbeatService.getImportantHeartbeats(monitorId), true);
+                client.sendEvent("uptime", monitorId, 720, heartbeatService.getUptimeData(monitorId).get("720"));
+                client.sendEvent("uptime", monitorId, 24, heartbeatService.getUptimeData(monitorId).get("24"));
+                client.sendEvent("avgPing", monitorId, heartbeatService.calculateAveragePing(monitorId));
             }
-            ack.sendAckData("添加维护监控事件成功");
+            Result result = new Result();
+            result.setOk(true);
+            result.setMsg("添加维护监控事件成功");
+            ack.sendAckData(result);
         };
     }
 
@@ -86,4 +97,5 @@ public class CreateHandler {
             ack.sendAckData("设置功能稍后完善");
         };
     }
+
 }
