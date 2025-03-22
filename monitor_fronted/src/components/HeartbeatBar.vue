@@ -92,23 +92,11 @@ export default {
         return [];
       }
 
-      let placeholders = [];
-
-      let start = this.beatList.length - this.maxBeat;
-
-      if (this.move) {
-        start = start - 1;
-      }
-
-      if (start < 0) {
-        // Add empty placeholder
-        for (let i = start; i < 0; i++) {
-          placeholders.push(0);
-        }
-        start = 0;
-      }
-
-      return placeholders.concat(this.beatList.slice(start));
+      // Simply take the first maxBeat elements
+      const end = Math.min(this.maxBeat, this.beatList.length);
+      
+      // Return the first portion of beatList
+      return this.beatList.slice(0, end);
     },
 
     wrapStyle() {

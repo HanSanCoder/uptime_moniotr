@@ -7,6 +7,7 @@ import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.handler.*;
 import io.hansan.monitor.model.Maintenance;
 import io.hansan.monitor.model.MonitorModel;
+import io.hansan.monitor.model.NotificationModel;
 import io.hansan.monitor.model.Tag;
 import org.noear.solon.annotation.Bean;
 import org.noear.solon.annotation.Component;
@@ -77,6 +78,9 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("pauseMaintenance", Integer.class, findHandler.pauseMaintenance());
         server.addEventListener("resumeMaintenance", Integer.class, findHandler.resumeMaintenance());
         server.addEventListener("editMaintenance", Maintenance.class, findHandler.editMaintenance());
+        server.addEventListener("deleteNotification", Integer.class, deleteHandler.deleteNotification());
+        server.addEventListener("addNotification", NotificationModel.class, createHandler.addNotification());
+        server.addEventListener("testNotification", NotificationModel.class, createHandler.testNotification());
 
         server.start();
     }

@@ -5,6 +5,7 @@ import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.model.Maintenance;
+import io.hansan.monitor.model.NotificationModel;
 import io.hansan.monitor.model.Tag;
 import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
@@ -28,7 +29,10 @@ public class CreateHandler {
     private MaintenanceService maintenanceService;
     @Inject
     private TagService tagService;
-
+    @Inject
+    private NotificationService notificationService;
+    @Inject
+    private EmailService emailService;
     /**
      * 处理添加监控事件
      */
@@ -98,4 +102,28 @@ public class CreateHandler {
         };
     }
 
+    public DataListener<NotificationModel> addNotification() {
+        return (client, data, ack) -> {
+            Result result = notificationService.addNotification(data);
+            client.sendEvent("notificationList", notificationService.listAll());
+            ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<NotificationModel> testNotification() {
+        return (client, data, ack) -> {
+            String email = data.getEmail();
+            String subject = data.getSubject();
+            boolean inSend = emailService.sendTestEmail(email, subject);
+            Result result = new Result();
+            if (inSend) {
+                result.setOk(true);
+                result.setMsg("发送测试邮件成功");
+            } else {
+                result.setOk(false);
+                result.setMsg("发送测试邮件失败");
+            }
+            ack.sendAckData(result);
+        };
+    }
 }

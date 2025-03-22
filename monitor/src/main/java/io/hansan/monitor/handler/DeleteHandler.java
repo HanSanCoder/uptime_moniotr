@@ -3,10 +3,7 @@ package io.hansan.monitor.handler;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.model.HeartbeatModel;
-import io.hansan.monitor.service.HeartbeatService;
-import io.hansan.monitor.service.MaintenanceService;
-import io.hansan.monitor.service.MonitorService;
-import io.hansan.monitor.service.TagService;
+import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
@@ -27,6 +24,8 @@ public class DeleteHandler {
     private MaintenanceService maintenanceService;
     @Inject
     private TagService tagService;
+    @Inject
+    private NotificationService notificationService;
     public DataListener<Integer> deleteTag() {
         return (client, data, ack) -> {
             Result result = tagService.deleteTag(data);
@@ -77,6 +76,14 @@ public class DeleteHandler {
                 client.sendEvent("heartbeatList", monitorId, beats, true);
             }
             Result result = maintenanceService.deleteMaintenance(data);
+            ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<Integer> deleteNotification() {
+        return (client, data, ack) -> {
+            Result result = notificationService.deleteNotification(data);
+            client.sendEvent("notificationList", notificationService.listAll());
             ack.sendAckData(result);
         };
     }

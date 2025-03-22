@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.mapper.HeartbeatMapper;
+import io.hansan.monitor.model.MonitorModel;
 import lombok.extern.slf4j.Slf4j;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -31,10 +32,46 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
         LambdaQueryWrapper<HeartbeatModel> wrapper = new LambdaQueryWrapper<HeartbeatModel>()
                 .eq(HeartbeatModel::getMonitorId, monitorId)
                 .orderByDesc(HeartbeatModel::getTime)
-                .last("LIMIT 100");
+                .last("LIMIT 50");
         List<HeartbeatModel> beats = this.list(wrapper);
-
+        cleanupOldHeartbeats(monitorId);
         return beats;
+    }
+
+    public void cleanupOldHeartbeats(Integer monitorId) {
+        try {
+            // First count total records for this monitor
+            Long totalCount = heartbeatMapper.selectCount(
+                    new LambdaQueryWrapper<HeartbeatModel>()
+                            .eq(HeartbeatModel::getMonitorId, monitorId)
+            );
+
+            // Only perform cleanup when we have more than 100 records
+            if (totalCount != null && totalCount > 100) {
+                // Find the 50th newest record's timestamp
+                HeartbeatModel cutoffRecord = heartbeatMapper.selectOne(
+                        new LambdaQueryWrapper<HeartbeatModel>()
+                                .eq(HeartbeatModel::getMonitorId, monitorId)
+                                .orderByDesc(HeartbeatModel::getTime)
+                                .last("LIMIT 1 OFFSET 49") // Get the 50th record (0-indexed)
+                );
+
+                if (cutoffRecord != null && cutoffRecord.getTime() != null) {
+                    int deleted = heartbeatMapper.delete(
+                            new LambdaQueryWrapper<HeartbeatModel>()
+                                    .eq(HeartbeatModel::getMonitorId, monitorId)
+                                    .lt(HeartbeatModel::getTime, cutoffRecord.getTime())
+                                    .ne(HeartbeatModel::getImportant, true) // Keep important heartbeats
+                    );
+
+                    if (deleted > 0) {
+                        log.debug("清理了监控ID {} 的 {} 条旧心跳数据", monitorId, deleted);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            log.error("清理心跳数据时发生错误: {}", e.getMessage());
+        }
     }
 
     /**
@@ -153,5 +190,19 @@ public class HeartbeatService extends ServiceImpl<HeartbeatMapper, HeartbeatMode
                 .eq(HeartbeatModel::getMonitorId, monitorId)
                 .set(HeartbeatModel::getStatus, statue);
         this.update(updateWrapper);
+    }
+
+    public Integer getLatestStatus(Integer monitorId, Integer maxretries) {
+        HeartbeatModel lastHeartbeat = heartbeatMapper.selectOne(
+                new LambdaQueryWrapper<HeartbeatModel>()
+                        .eq(HeartbeatModel::getMonitorId, monitorId)
+                        .orderByDesc(HeartbeatModel::getTime)
+                        .last("LIMIT 1 OFFSET " + maxretries)
+        );
+        return lastHeartbeat != null ? lastHeartbeat.getStatus() : null;
+    }
+
+    public void addPendingHeartbeat(MonitorModel monitor) {
+        add(monitor.getId(), 2, monitor.getName() + "服务重试中", 0.0, false);
     }
 }

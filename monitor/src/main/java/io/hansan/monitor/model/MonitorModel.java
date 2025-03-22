@@ -113,6 +113,8 @@ public class MonitorModel {
      * 监控失败时的重试次数，默认为0
      */
     private Integer maxretries;
+
+    private boolean notified;
     @TableField(exist = false)
     private List<TagDTO> tags;
 }
