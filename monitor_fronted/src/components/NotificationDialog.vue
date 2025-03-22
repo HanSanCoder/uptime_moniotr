@@ -31,20 +31,20 @@
                         <div class="mb-3 mt-4">
                             <hr class="dropdown-divider mb-4">
 
-                            <div class="form-check form-switch">
-                                <input v-model="notification.isDefault" class="form-check-input" type="checkbox">
-                                <label class="form-check-label">{{ $t("Default enabled") }}</label>
-                            </div>
-                            <div class="form-text">
-                                {{ $t("enableDefaultNotificationDescription") }}
-                            </div>
+<!--                            <div class="form-check form-switch">-->
+<!--                                <input v-model="notification.isDefault" class="form-check-input" type="checkbox">-->
+<!--                                <label class="form-check-label">{{ $t("Default enabled") }}</label>-->
+<!--                            </div>-->
+<!--                            <div class="form-text">-->
+<!--                                {{ $t("enableDefaultNotificationDescription") }}-->
+<!--                            </div>-->
 
-                            <br>
+<!--                            <br>-->
 
-                            <div class="form-check form-switch">
-                                <input v-model="notification.applyExisting" class="form-check-input" type="checkbox">
-                                <label class="form-check-label">{{ $t("Apply on all existing monitors") }}</label>
-                            </div>
+<!--                            <div class="form-check form-switch">-->
+<!--                                <input v-model="notification.applyExisting" class="form-check-input" type="checkbox">-->
+<!--                                <label class="form-check-label">{{ $t("Apply on all existing monitors") }}</label>-->
+<!--                            </div>-->
                         </div>
                     </div>
 
@@ -95,6 +95,8 @@ export default {
                 /** @type { null | keyof NotificationFormList } */
                 type: null,
                 isDefault: false,
+                email: "",
+                subject: ""
                 // Do not set default value here, please scroll to show()
             }
         };
@@ -102,71 +104,68 @@ export default {
 
     computed: {
         currentForm() {
-            if (!this.notification.type) {
-                return null;
-            }
-            return NotificationFormList[this.notification.type];
+            return NotificationFormList["smtp"];
         },
 
         notificationNameList() {
             let regularList = {
-                "alerta": "Alerta",
-                "AlertNow": "AlertNow",
-                "apprise": this.$t("apprise"),
-                "Bark": "Bark",
-                "clicksendsms": "ClickSend SMS",
-                "discord": "Discord",
-                "GoogleChat": "Google Chat (Google Workspace)",
-                "gorush": "Gorush",
-                "gotify": "Gotify",
-                "HomeAssistant": "Home Assistant",
-                "Kook": "Kook",
-                "line": "LINE Messenger",
-                "LineNotify": "LINE Notify",
-                "lunasea": "LunaSea",
-                "matrix": "Matrix",
-                "mattermost": "Mattermost",
-                "nostr": "Nostr",
-                "ntfy": "Ntfy",
-                "octopush": "Octopush",
-                "OneBot": "OneBot",
-                "Opsgenie": "Opsgenie",
-                "PagerDuty": "PagerDuty",
-                "PagerTree": "PagerTree",
-                "pushbullet": "Pushbullet",
-                "PushByTechulus": "Push by Techulus",
-                "pushover": "Pushover",
-                "pushy": "Pushy",
-                "rocket.chat": "Rocket.Chat",
-                "signal": "Signal",
-                "slack": "Slack",
-                "squadcast": "SquadCast",
-                "SMSEagle": "SMSEagle",
+                // "alerta": "Alerta",
+                // "AlertNow": "AlertNow",
+                // "apprise": this.$t("apprise"),
+                // "Bark": "Bark",
+                // "clicksendsms": "ClickSend SMS",
+                // "discord": "Discord",
+                // "GoogleChat": "Google Chat (Google Workspace)",
+                // "gorush": "Gorush",
+                // "gotify": "Gotify",
+                // "HomeAssistant": "Home Assistant",
+                // "Kook": "Kook",
+                // "line": "LINE Messenger",
+                // "LineNotify": "LINE Notify",
+                // "lunasea": "LunaSea",
+                // "matrix": "Matrix",
+                // "mattermost": "Mattermost",
+                // "nostr": "Nostr",
+                // "ntfy": "Ntfy",
+                // "octopush": "Octopush",
+                // "OneBot": "OneBot",
+                // "Opsgenie": "Opsgenie",
+                // "PagerDuty": "PagerDuty",
+                // "PagerTree": "PagerTree",
+                // "pushbullet": "Pushbullet",
+                // "PushByTechulus": "Push by Techulus",
+                // "pushover": "Pushover",
+                // "pushy": "Pushy",
+                // "rocket.chat": "Rocket.Chat",
+                // "signal": "Signal",
+                // "slack": "Slack",
+                // "squadcast": "SquadCast",
+                // "SMSEagle": "SMSEagle",
                 "smtp": this.$t("smtp"),
-                "stackfield": "Stackfield",
-                "teams": "Microsoft Teams",
-                "telegram": "Telegram",
-                "twilio": "Twilio",
-                "Splunk": "Splunk",
-                "webhook": "Webhook",
-                "GoAlert": "GoAlert",
-                "ZohoCliq": "ZohoCliq"
+                // "stackfield": "Stackfield",
+                // "teams": "Microsoft Teams",
+                // "telegram": "Telegram",
+                // "twilio": "Twilio",
+                // "Splunk": "Splunk",
+                // "webhook": "Webhook",
+                // "GoAlert": "GoAlert",
+                // "ZohoCliq": "ZohoCliq"
             };
 
             // Put notifications here if it's not supported in most regions or its documentation is not in English
             let regionalList = {
-                "AliyunSMS": "AliyunSMS (阿里云短信服务)",
-                "DingDing": "DingDing (钉钉自定义机器人)",
-                "Feishu": "Feishu (飞书)",
-                "FlashDuty": "FlashDuty (快猫星云)",
-                "FreeMobile": "FreeMobile (mobile.free.fr)",
-                "PushDeer": "PushDeer",
-                "promosms": "PromoSMS",
-                "serwersms": "SerwerSMS.pl",
-                "SMSManager": "SmsManager (smsmanager.cz)",
-                "WeCom": "WeCom (企业微信群机器人)",
-                "ServerChan": "ServerChan (Server酱)",
-                "smsc": "SMSC",
+                // "AliyunSMS": "AliyunSMS (阿里云短信服务)",
+                // "DingDing": "DingDing (钉钉自定义机器人)",
+                // "Feishu": "Feishu (飞书)",
+                // "FlashDuty": "FlashDuty (快猫星云)",
+                // "FreeMobile": "FreeMobile (mobile.free.fr)",
+                // "PushDeer": "PushDeer",
+                // "promosms": "PromoSMS",
+                // "serwersms": "SerwerSMS.pl",
+                // "SMSManager": "SmsManager (smsmanager.cz)",
+                // "WeCom": "WeCom (企业微信群机器人)",
+                // "ServerChan": "ServerChan (Server酱)",
+                // "smsc": "SMSC",
             };
 
             // Sort by notification name
@@ -234,7 +233,7 @@ export default {
 
                 for (let n of this.$root.notificationList) {
                     if (n.id === notificationID) {
-                        this.notification = JSON.parse(n.config);
+                        this.notification = n;
                         break;
                     }
                 }
@@ -242,7 +241,7 @@ export default {
                 this.id = null;
                 this.notification = {
                     name: "",
-                    type: "telegram",
+                    type: "smtp",
                     isDefault: false,
                 };
             }

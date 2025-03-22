@@ -128,15 +128,15 @@
                             </div>
 
                             <!-- Invert keyword -->
-                            <div v-if="monitor.type === 'keyword' || monitor.type === 'grpc-keyword'" class="my-3 form-check">
-                                <input id="invert-keyword" v-model="monitor.invertKeyword" class="form-check-input" type="checkbox">
-                                <label class="form-check-label" for="invert-keyword">
-                                    {{ $t("Invert Keyword") }}
-                                </label>
-                                <div class="form-text">
-                                    {{ $t("invertKeywordDescription") }}
-                                </div>
-                            </div>
+<!--                            <div v-if="monitor.type === 'keyword' || monitor.type === 'grpc-keyword'" class="my-3 form-check">-->
+<!--                                <input id="invert-keyword" v-model="monitor.invertKeyword" class="form-check-input" type="checkbox">-->
+<!--                                <label class="form-check-label" for="invert-keyword">-->
+<!--                                    {{ $t("Invert Keyword") }}-->
+<!--                                </label>-->
+<!--                                <div class="form-text">-->
+<!--                                    {{ $t("invertKeywordDescription") }}-->
+<!--                                </div>-->
+<!--                            </div>-->
 
                             <!-- Json Query -->
                             <div v-if="monitor.type === 'json-query'" class="my-3">
@@ -409,42 +409,42 @@
                                 <input id="timeout" v-model="monitor.timeout" type="number" class="form-control" required min="0" step="0.1">
                             </div>
 
-                            <div class="my-3">
-                                <label for="resend-interval" class="form-label">
-                                    {{ $t("Resend Notification if Down X times consecutively") }}
-                                    <span v-if="monitor.resendInterval > 0">({{ $t("resendEveryXTimes", [ monitor.resendInterval ]) }})</span>
-                                    <span v-else>({{ $t("resendDisabled") }})</span>
-                                </label>
-                                <input id="resend-interval" v-model="monitor.resendInterval" type="number" class="form-control" required min="0" step="1">
-                            </div>
+<!--                            <div class="my-3">-->
+<!--                                <label for="resend-interval" class="form-label">-->
+<!--                                    {{ $t("Resend Notification if Down X times consecutively") }}-->
+<!--                                    <span v-if="monitor.resendInterval > 0">({{ $t("resendEveryXTimes", [ monitor.resendInterval ]) }})</span>-->
+<!--                                    <span v-else>({{ $t("resendDisabled") }})</span>-->
+<!--                                </label>-->
+<!--                                <input id="resend-interval" v-model="monitor.resendInterval" type="number" class="form-control" required min="0" step="1">-->
+<!--                            </div>-->
 
-                            <h2 v-if="monitor.type !== 'push'" class="mt-5 mb-2">{{ $t("Advanced") }}</h2>
+<!--                            <h2 v-if="monitor.type !== 'push'" class="mt-5 mb-2">{{ $t("Advanced") }}</h2>-->
 
-                            <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query' " class="my-3 form-check">
-                                <input id="expiry-notification" v-model="monitor.expiryNotification" class="form-check-input" type="checkbox">
-                                <label class="form-check-label" for="expiry-notification">
-                                    {{ $t("Certificate Expiry Notification") }}
-                                </label>
-                                <div class="form-text">
-                                </div>
-                            </div>
+<!--                            <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query' " class="my-3 form-check">-->
+<!--                                <input id="expiry-notification" v-model="monitor.expiryNotification" class="form-check-input" type="checkbox">-->
+<!--                                <label class="form-check-label" for="expiry-notification">-->
+<!--                                    {{ $t("Certificate Expiry Notification") }}-->
+<!--                                </label>-->
+<!--                                <div class="form-text">-->
+<!--                                </div>-->
+<!--                            </div>-->
 
-                            <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query' " class="my-3 form-check">
-                                <input id="ignore-tls" v-model="monitor.ignoreTls" class="form-check-input" type="checkbox" value="">
-                                <label class="form-check-label" for="ignore-tls">
-                                    {{ $t("ignoreTLSError") }}
-                                </label>
-                            </div>
+<!--                            <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query' " class="my-3 form-check">-->
+<!--                                <input id="ignore-tls" v-model="monitor.ignoreTls" class="form-check-input" type="checkbox" value="">-->
+<!--                                <label class="form-check-label" for="ignore-tls">-->
+<!--                                    {{ $t("ignoreTLSError") }}-->
+<!--                                </label>-->
+<!--                            </div>-->
 
-                            <div class="my-3 form-check">
-                                <input id="upside-down" v-model="monitor.upsideDown" class="form-check-input" type="checkbox">
-                                <label class="form-check-label" for="upside-down">
-                                    {{ $t("Upside Down Mode") }}
-                                </label>
-                                <div class="form-text">
-                                    {{ $t("upsideDownModeDescription") }}
-                                </div>
-                            </div>
+<!--                            <div class="my-3 form-check">-->
+<!--                                <input id="upside-down" v-model="monitor.upsideDown" class="form-check-input" type="checkbox">-->
+<!--                                <label class="form-check-label" for="upside-down">-->
+<!--                                    {{ $t("Upside Down Mode") }}-->
+<!--                                </label>-->
+<!--                                <div class="form-text">-->
+<!--                                    {{ $t("upsideDownModeDescription") }}-->
+<!--                                </div>-->
+<!--                            </div>-->
 
                             <div v-if="monitor.type === 'gamedig'" class="my-3 form-check">
                                 <input id="gamedig-guess-port" v-model="monitor.gamedigGivenPortOnly" :true-value="false" :false-value="true" class="form-check-input" type="checkbox">
@@ -545,32 +545,32 @@
                             </button>
 
                             <!-- Proxies -->
-                            <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query'">
-                                <h2 class="mt-5 mb-2">{{ $t("Proxy") }}</h2>
-                                <p v-if="$root.proxyList.length === 0">
-                                    {{ $t("Not available, please setup.") }}
-                                </p>
+<!--                            <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query'">-->
+<!--                                <h2 class="mt-5 mb-2">{{ $t("Proxy") }}</h2>-->
+<!--                                <p v-if="$root.proxyList.length === 0">-->
+<!--                                    {{ $t("Not available, please setup.") }}-->
+<!--                                </p>-->
 
-                                <div v-if="$root.proxyList.length > 0" class="form-check my-3">
-                                    <input id="proxy-disable" v-model="monitor.proxyId" :value="null" name="proxy" class="form-check-input" type="radio">
-                                    <label class="form-check-label" for="proxy-disable">{{ $t("No Proxy") }}</label>
-                                </div>
+<!--                                <div v-if="$root.proxyList.length > 0" class="form-check my-3">-->
+<!--                                    <input id="proxy-disable" v-model="monitor.proxyId" :value="null" name="proxy" class="form-check-input" type="radio">-->
+<!--                                    <label class="form-check-label" for="proxy-disable">{{ $t("No Proxy") }}</label>-->
+<!--                                </div>-->
 
-                                <div v-for="proxy in $root.proxyList" :key="proxy.id" class="form-check my-3">
-                                    <input :id="`proxy-${proxy.id}`" v-model="monitor.proxyId" :value="proxy.id" name="proxy" class="form-check-input" type="radio">
+<!--                                <div v-for="proxy in $root.proxyList" :key="proxy.id" class="form-check my-3">-->
+<!--                                    <input :id="`proxy-${proxy.id}`" v-model="monitor.proxyId" :value="proxy.id" name="proxy" class="form-check-input" type="radio">-->
 
-                                    <label class="form-check-label" :for="`proxy-${proxy.id}`">
-                                        {{ proxy.host }}:{{ proxy.port }} ({{ proxy.protocol }})
-                                        <a href="#" @click="$refs.proxyDialog.show(proxy.id)">{{ $t("Edit") }}</a>
-                                    </label>
+<!--                                    <label class="form-check-label" :for="`proxy-${proxy.id}`">-->
+<!--                                        {{ proxy.host }}:{{ proxy.port }} ({{ proxy.protocol }})-->
+<!--                                        <a href="#" @click="$refs.proxyDialog.show(proxy.id)">{{ $t("Edit") }}</a>-->
+<!--                                    </label>-->
 
-                                    <span v-if="proxy.default === true" class="badge bg-primary ms-2">{{ $t("default") }}</span>
-                                </div>
+<!--                                    <span v-if="proxy.default === true" class="badge bg-primary ms-2">{{ $t("default") }}</span>-->
+<!--                                </div>-->
 
-                                <button class="btn btn-primary me-2" type="button" @click="$refs.proxyDialog.show()">
-                                    {{ $t("Setup Proxy") }}
-                                </button>
-                            </div>
+<!--                                <button class="btn btn-primary me-2" type="button" @click="$refs.proxyDialog.show()">-->
+<!--                                    {{ $t("Setup Proxy") }}-->
+<!--                                </button>-->
+<!--                            </div>-->
 
                             <!-- Kafka SASL Options -->
                             <!-- Kafka Producer only -->
