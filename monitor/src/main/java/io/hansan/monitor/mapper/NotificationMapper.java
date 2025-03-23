@@ -18,4 +18,6 @@ public interface NotificationMapper extends BaseMapper<NotificationModel> {
 
     @Delete("DELETE FROM monitor_notification WHERE notification_id = #{id}")
     void deleteMonitorNotification(Integer id);
+    @Delete("DELETE FROM monitor_notification WHERE monitor_id = #{monitorId}")
+    boolean deleteMonitorNotificationByMonitorId(Integer monitorId);
 }

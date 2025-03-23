@@ -69,6 +69,9 @@ public class TagService extends ServiceImpl<TagMapper, Tag>{
         return result;
     }
 
+    private void deleteMonitorTagByMonitorId(Integer monitorId){
+        tagMapper.deleteMonitorTagByMonitorId(monitorId);
+    }
     public Result deleteTag(Integer tagId) {
         boolean deleted = this.removeById(tagId);
         Result result = new Result();

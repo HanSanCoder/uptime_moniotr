@@ -13,8 +13,8 @@ import java.time.LocalDateTime;
  * @description：TODO
  */
 @Data
-@TableName("users")
-public class UserModel {
+@TableName("user")
+public class User {
     /**
      * 用户的唯一标识符
      */

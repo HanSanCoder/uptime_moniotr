@@ -14,12 +14,6 @@ public interface MonitorMapper extends BaseMapper<MonitorModel> {
 
     List<MonitorModel> getMonitorsByUserId(Integer userId);
 
-    @Select("SELECT * FROM monitor WHERE type = #{type} ORDER BY id")
-    List<MonitorModel> getMonitorsByType(String type);
-
-    @Select("SELECT * FROM monitor WHERE hostname = #{hostname} AND port = #{port} AND type = 'tcp'")
-    List<MonitorModel> findTcpMonitorsByHostAndPort(@Param("hostname") String hostname, @Param("port") Integer port);
-
     @Select("SELECT t.name, t.id as `tag_id`, t.color FROM tag t " +
             "INNER JOIN monitor_tag_relation mtr ON t.id = mtr.tag_id " +
             "WHERE mtr.monitor_id = #{monitorId}")
@@ -30,8 +24,8 @@ public interface MonitorMapper extends BaseMapper<MonitorModel> {
     })
     List<TagDTO> findTagsByMonitorId(@Param("monitorId") Integer monitorId);
 
-    @Select("SELECT *, monitor.name AS pathName FROM monitor")
-    List<MonitorModel> findAll();
+    @Select("SELECT *, monitor.name AS pathName FROM monitor WHERE user_id = #{userId}")
+    List<MonitorModel> findAll(Integer userId);
 
     @Select("SELECT *, monitor.name AS pathName FROM monitor WHERE active = 1 AND (created_date IS NULL OR DATE_ADD(created_date, INTERVAL check_interval SECOND) <= NOW())")
     List<MonitorModel> findActiveMonitorsDueForCheck();
@@ -44,4 +38,6 @@ public interface MonitorMapper extends BaseMapper<MonitorModel> {
     int batchInsertMonitorNotifications(@Param("monitorId") Integer monitorId,
                                        @Param("notificationIds") List<Integer> notificationIds);
 
+    @Select("SELECT notification_id FROM monitor_notification WHERE monitor_id = #{id}")
+    List<Integer> findNotificationIdsByMonitorId(Integer id);
 }

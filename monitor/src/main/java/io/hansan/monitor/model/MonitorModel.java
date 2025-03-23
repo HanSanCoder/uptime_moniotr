@@ -5,6 +5,8 @@ import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
@@ -13,7 +15,10 @@ import io.hansan.monitor.dto.TagDTO;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * @Author ：何汉叁
@@ -50,7 +55,12 @@ public class MonitorModel {
      * 监控任务所属用户ID
      */
     private Integer userId;
-
+    private String description;
+    private Double timeout;
+    private String method;
+    private Integer packetSize;
+    private String acceptedStatuscodes;
+    private Integer maxredirects;
     /**
      * 检查间隔时间（秒）
      * 默认为20秒
@@ -106,15 +116,52 @@ public class MonitorModel {
      * 用于HTTP监控检查响应内容中是否包含特定关键词
      */
     private String keyword;
-    private String description;
 
     /**
      * 最大重试次数
      * 监控失败时的重试次数，默认为0
      */
     private Integer maxretries;
+    private Integer retryInterval;
 
     private boolean notified;
     @TableField(exist = false)
     private List<TagDTO> tags;
+    @TableField(exist = false)
+    @JsonProperty("notificationIDList")
+    private List<Integer> notificationIDList;
+
+    @TableField(exist = false)
+    @JsonIgnore
+    private Map<String, Boolean> notificationIDMap;
+
+    // Custom setter for deserialization from frontend
+    @JsonProperty("notificationIDList")
+    private void setNotificationIDMap(Map<String, Boolean> map) {
+        this.notificationIDMap = map;
+        // Update the list from the map
+        if (map != null) {
+            this.notificationIDList = map.entrySet().stream()
+                    .filter(Map.Entry::getValue)
+                    .map(entry -> Integer.parseInt(entry.getKey()))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @JsonIgnore  // This prevents direct getter serialization
+    public Map<String, Boolean> getNotificationIDMap() {
+        if (notificationIDMap == null && notificationIDList != null) {
+            notificationIDMap = new HashMap<>();
+            for (Integer id : notificationIDList) {
+                notificationIDMap.put(String.valueOf(id), true);
+            }
+        }
+        return notificationIDMap;
+    }
+
+    // Add this method to ensure the list is serialized with the correct property name
+    @JsonProperty("notificationIDList")
+    public Map<String, Boolean> getNotificationIDListForJson() {
+        return getNotificationIDMap();
+    }
 }

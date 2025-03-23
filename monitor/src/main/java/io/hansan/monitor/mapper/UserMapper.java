@@ -1,7 +1,7 @@
 package io.hansan.monitor.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import io.hansan.monitor.model.UserModel;
+import io.hansan.monitor.model.User;
 import org.apache.ibatis.annotations.Mapper;
 import org.noear.solon.annotation.Component;
 
@@ -11,5 +11,5 @@ import org.noear.solon.annotation.Component;
  * @description：TODO
  */
 @Mapper
-public interface UserMapper extends BaseMapper<UserModel> {
+public interface UserMapper extends BaseMapper<User> {
 }

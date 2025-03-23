@@ -2,9 +2,13 @@ package io.hansan.monitor.service;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import io.hansan.monitor.dto.Result;
+import io.hansan.monitor.dto.UserContext;
 import io.hansan.monitor.mapper.UserMapper;
-import io.hansan.monitor.model.UserModel;
+import io.hansan.monitor.model.User;
 import org.noear.solon.annotation.Component;
+
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -13,12 +17,12 @@ import java.util.List;
  * @Description：用户服务，提供用户增删改查功能
  */
 @Component
-public class UserService extends ServiceImpl<UserMapper, UserModel> {
+public class UserService extends ServiceImpl<UserMapper, User> {
 
     /**
      * 获取所有用户
      */
-    public List<UserModel> listAll() {
+    public List<User> listAll() {
         return super.list();
     }
 
@@ -33,33 +37,50 @@ public class UserService extends ServiceImpl<UserMapper, UserModel> {
         return this.removeById(id);
     }
 
-    /**
-     * 更新用户
-     */
-    public boolean updateUser(UserModel user) {
-        return this.updateById(user);
-    }
-
-    /**
-     * 根据用户名获取用户
-     */
-    public UserModel getUserByUsername(String username) {
-        return this.getOne(new LambdaQueryWrapper<UserModel>().eq(UserModel::getUsername, username));
-    }
 
     /**
      * 创建用户
      */
-    public Long createUser(UserModel user) {
-        this.save(user);
-        return user.getId();
+    public Result createUser(String username, String password) {
+        User user = new User();
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setActive(true);
+        user.setCreatedAt(LocalDateTime.now());
+        Result result = new Result();
+        boolean save = this.save(user);
+        result.setOk(save);
+        if (save) {
+            result.setMsg("创建用户成功");
+        } else {
+            result.setMsg("创建用户失败");
+        }
+        return result;
     }
 
-    /**
-     * 根据ID获取用户
-     */
-    public UserModel getUserById(Long id) {
-        return this.getById(id);
+    public Result login(String username, String password) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getUsername, username);
+        wrapper.eq(User::getPassword, password);
+        User user = this.getOne(wrapper);
+        Result result = new Result();
+        if (user != null) {
+            UserContext.setCurrentUserId(Math.toIntExact(user.getId()));
+            result.setUsername(user.getUsername());
+            result.setOk(true);
+            result.setMsg("登录成功");
+        } else {
+            result.setOk(false);
+            result.setMsg("用户名或密码错误");
+        }
+        return result;
     }
 
+    public Result logout() {
+//        UserContext.setCurrentUserId(1001);
+        Result result = new Result();
+        result.setOk(true);
+        result.setMsg("退出登录成功");
+        return result;
+    }
 }

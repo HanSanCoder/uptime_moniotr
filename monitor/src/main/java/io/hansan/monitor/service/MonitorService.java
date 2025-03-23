@@ -12,8 +12,11 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.dto.TagDTO;
+import io.hansan.monitor.dto.UserContext;
 import io.hansan.monitor.mapper.MaintenanceMapper;
 import io.hansan.monitor.mapper.MonitorMapper;
+import io.hansan.monitor.mapper.NotificationMapper;
+import io.hansan.monitor.mapper.TagMapper;
 import io.hansan.monitor.model.MonitorModel;
 import lombok.extern.slf4j.Slf4j;
 import org.noear.solon.annotation.Component;
@@ -32,16 +35,22 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
     private MonitorMapper monitorMapper;
     @Inject
     private MaintenanceMapper maintenanceMapper;
+    @Inject
+    private NotificationMapper notificationMapper;
+    @Inject
+    private TagMapper tagMapper;
     /**
      * 获取所有监控项
      */
     public List<MonitorModel> listAll() {
         // 获取所有监控项
-        List<MonitorModel> monitors = monitorMapper.findAll();
+        List<MonitorModel> monitors = monitorMapper.findAll(UserContext.getCurrentUserId());
 
         // 查询每个监控项的标签
         for (MonitorModel monitor : monitors) {
             List<TagDTO> tags = monitorMapper.findTagsByMonitorId(monitor.getId());
+            List<Integer> notificationIDList = monitorMapper.findNotificationIdsByMonitorId(monitor.getId());
+            monitor.setNotificationIDList(notificationIDList);
             monitor.setTags(tags);
         }
 
@@ -53,7 +62,8 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
      */
     public List<Integer> listAllIds() {
         LambdaQueryWrapper<MonitorModel> wrapper = new LambdaQueryWrapper<>();
-        wrapper.select(MonitorModel::getId);
+        wrapper.select(MonitorModel::getId)
+               .eq(MonitorModel::getUserId, UserContext.getCurrentUserId());
         return this.list(wrapper)
                 .stream()
                 .map(MonitorModel::getId)
@@ -65,6 +75,7 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
      */
     public Result addMonitor(MonitorDTO monitor) {
         MonitorModel monitorModel = monitor.convertDtoToModel();
+        monitorModel.setUserId(UserContext.getCurrentUserId());
         List<Integer> notificationIDList = monitor.getNotificationIDList();
         Result result = new Result();
         boolean saved = this.save(monitorModel);
@@ -101,16 +112,25 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
     /**
      * 更新监控项
      */
-    public Result updateMonitor(MonitorModel monitor) {
+    public Result updateMonitor(MonitorDTO monitor) {
+        MonitorModel monitorModel = monitor.convertDtoToModel();
+        List<Integer> notificationIDList = monitor.getNotificationIDList();
         Result result = new Result();
-        boolean updated = this.updateById(monitor);
+        boolean updated = this.updateById(monitorModel);
+        tagMapper.deleteMonitorTagByMonitorId(monitorModel.getId());
+        notificationMapper.deleteMonitorNotificationByMonitorId(monitor.getId());
         if (updated) {
+            Integer monitorId = monitorModel.getId();
+            if (notificationIDList != null && !notificationIDList.isEmpty()) {
+                monitorMapper.batchInsertMonitorNotifications(monitorId, notificationIDList);
+            }
+            result.setMonitorID(monitorId);
+            result.setMsg("修改监控成功");
             result.setOk(true);
-            result.setMsg("更新监控成功");
             return result;
         }
         result.setOk(false);
-        result.setMsg("更新监控失败");
+        result.setMsg("修改监控失败");
         return result;
     }
 
@@ -145,6 +165,10 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
 
     public Result getByMonitorId(Integer monitorId) {
         MonitorModel monitor = monitorMapper.selectById(monitorId);
+        List<TagDTO> tags = monitorMapper.findTagsByMonitorId(monitor.getId());
+        List<Integer> notificationIDList = monitorMapper.findNotificationIdsByMonitorId(monitor.getId());
+        monitor.setNotificationIDList(notificationIDList);
+        monitor.setTags(tags);
         Result result = new Result();
         result.setOk(true);
         result.setMonitor(monitor);

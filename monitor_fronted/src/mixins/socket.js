@@ -353,16 +353,15 @@ export default {
          * @param {loginCB} callback Callback to call with result
          */
         login(username, password, token, callback) {
-            socket.emit("login", {
+            socket.emit("login", [
                 username,
                 password,
-                token,
-            }, (res) => {
+                token], (res) => {
                 if (res.tokenRequired) {
                     callback(res);
                 }
-
-                if (res.ok) {
+                this.username = res.username;
+                if (!res.ok) {
                     this.storage().token = res.token;
                     this.socket.token = res.token;
                     this.loggedIn = true;
@@ -711,7 +710,7 @@ export default {
                 // Use optional chaining to safely access nested properties
                 let beat = this.$root.lastHeartbeatList?.[monitorID];
                 let monitor = this.$root.monitorList[monitorID];
-                if (beat.status === MAINTENANCE) monitor.active = true;
+                if (beat != null &&beat.status === MAINTENANCE) monitor.active = true;
                 if (monitor && !monitor.active) {
                     result.pause++;
                 } else if (beat) {

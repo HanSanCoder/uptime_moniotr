@@ -7,6 +7,7 @@ package io.hansan.monitor.handler;
  */
 import com.corundumstudio.socketio.SocketIOClient;
 import com.corundumstudio.socketio.listener.ConnectListener;
+import io.hansan.monitor.dto.UserContext;
 import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
@@ -51,9 +52,8 @@ public class ConnectionHandler implements ConnectListener {
             client.sendEvent("uptime", monitorId, 24, heartbeatService.getUptimeData(monitorId).get("24"));
             client.sendEvent("avgPing", monitorId, heartbeatService.calculateAveragePing(monitorId));
         }
-//        client.sendEvent("heartbeat", heartbeatSocketHandler.heartbeatListener());
         // 发送维护列表
-        client.sendEvent("maintenanceList", maintenanceService.findByUserId(1));
+        client.sendEvent("maintenanceList", maintenanceService.findByUserId(UserContext.getCurrentUserId()));
 
     }
 }

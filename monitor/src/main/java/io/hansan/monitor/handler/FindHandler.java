@@ -7,10 +7,7 @@ import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.model.Maintenance;
 import io.hansan.monitor.model.MonitorModel;
 import io.hansan.monitor.model.Tag;
-import io.hansan.monitor.service.HeartbeatService;
-import io.hansan.monitor.service.MaintenanceService;
-import io.hansan.monitor.service.MonitorService;
-import io.hansan.monitor.service.TagService;
+import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
 
@@ -31,7 +28,8 @@ public class FindHandler {
     private MaintenanceService maintenanceService;
     @Inject
     private TagService tagService;
-
+    @Inject
+    private UserService userService;
     /**
      * 处理添加监控事件
      */
@@ -87,9 +85,10 @@ public class FindHandler {
         };
     }
 
-    public DataListener<MonitorModel> editMonitor() {
+    public DataListener<MonitorDTO> editMonitor() {
         return (client, data, ack) -> {
             Result result = monitorService.updateMonitor(data);
+            client.sendEvent("monitorList", monitorService.getMonitorsByUserId(1));
             ack.sendAckData(result);
         };
     }
@@ -178,6 +177,15 @@ public class FindHandler {
         return (client, data, ack) -> {
             Result monitor = maintenanceService.editMaintenance(data);
             ack.sendAckData(monitor);
+        };
+    }
+
+    public DataListener<Object[]> login() {
+        return (client, data, ack) -> {
+            String username = (String) data[0];
+            String password = (String) data[1];
+            Result result = userService.login(username, password);
+            ack.sendAckData(result);
         };
     }
 }

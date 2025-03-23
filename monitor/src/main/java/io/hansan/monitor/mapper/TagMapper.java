@@ -25,4 +25,6 @@ public interface TagMapper extends BaseMapper<Tag> {
     boolean addMonitorTag(Integer tagId, Integer monitorId);
     @Delete("DELETE FROM monitor_tag_relation WHERE tag_id = #{tagId} AND monitor_id = #{monitorId}")
     boolean deleteMonitorTag(Integer tagId, Integer monitorId);
+    @Delete("DELETE FROM monitor_tag_relation WHERE monitor_id = #{monitorId}")
+    boolean deleteMonitorTagByMonitorId(Integer monitorId);
 }

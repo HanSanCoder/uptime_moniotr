@@ -16,7 +16,7 @@ public class MonitorCheckerFactory {
     public MonitorCheckerFactory(HeartbeatService heartbeatService, WebSocketConfig webSocketServer) {
         checkers.put("http", new HttpMonitorChecker(heartbeatService, webSocketServer));
         checkers.put("ping", new PingMonitorChecker(heartbeatService, webSocketServer));
-        checkers.put("tcp", new TcpMonitorChecker(heartbeatService, webSocketServer));
+        checkers.put("port", new TcpMonitorChecker(heartbeatService, webSocketServer));
     }
 
     public MonitorChecker getChecker(String type) {

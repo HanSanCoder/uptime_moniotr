@@ -31,4 +31,5 @@ public class Result {
     private Maintenance maintenance;
     private List<HeartbeatModel> beats;
     private Long maintenanceID;
+    private String username;
 }

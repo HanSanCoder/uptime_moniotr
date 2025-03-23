@@ -5,7 +5,7 @@
                 <div>
                     <object width="64" height="64" data="/icon.svg" />
                     <div style="font-size: 28px; font-weight: bold; margin-top: 5px;">
-                        Uptime Kuma
+                        Uptime Monitor
                     </div>
                 </div>
 
@@ -82,7 +82,7 @@ export default {
                 return;
             }
 
-            this.$root.getSocket().emit("setup", this.username, this.password, (res) => {
+            this.$root.getSocket().emit("setup", [this.username, this.password], (res) => {
                 this.processing = false;
                 this.$root.toastRes(res);
 

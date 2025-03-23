@@ -21,12 +21,12 @@
                                         <option value="ping">
                                             Ping
                                         </option>
-                                        <option value="keyword">
-                                            HTTP(s) - {{ $t("Keyword") }}
-                                        </option>
-                                        <option value="json-query">
-                                            HTTP(s) - {{ $t("Json Query") }}
-                                        </option>
+<!--                                        <option value="keyword">-->
+<!--                                            HTTP(s) - {{ $t("Keyword") }}-->
+<!--                                        </option>-->
+<!--                                        <option value="json-query">-->
+<!--                                            HTTP(s) - {{ $t("Json Query") }}-->
+<!--                                        </option>-->
                                         <option value="grpc-keyword">
                                             gRPC(s) - {{ $t("Keyword") }}
                                         </option>
@@ -113,7 +113,7 @@
                                 <label for="push-url" class="form-label">{{ $t("PushUrl") }}</label>
                                 <CopyableInput id="push-url" v-model="pushURL" type="url" disabled="disabled" />
                                 <div class="form-text">
-                                    {{ $t("needPushEvery", [monitor.interval]) }}<br />
+                                    {{ $t("needPushEvery", [monitor.checkInterval]) }}<br />
                                     {{ $t("pushOptionalParams", ["status, msg, ping"]) }}
                                 </div>
                             </div>
@@ -383,8 +383,8 @@
 
                             <!-- Interval -->
                             <div class="my-3">
-                                <label for="interval" class="form-label">{{ $t("Heartbeat Interval") }} ({{ $t("checkEverySecond", [ monitor.interval ]) }})</label>
-                                <input id="interval" v-model="monitor.interval" type="number" class="form-control" required :min="minInterval" step="1" :max="maxInterval" @blur="finishUpdateInterval">
+                                <label for="interval" class="form-label">{{ $t("Heartbeat Interval") }} ({{ $t("checkEverySecond", [ monitor.checkInterval ]) }})</label>
+                                <input id="interval" v-model="monitor.checkInterval" type="number" class="form-control" required :min="minInterval" step="1" :max="maxInterval" @blur="finishUpdateInterval">
                             </div>
 
                             <div class="my-3">
@@ -405,18 +405,10 @@
 
                             <!-- Timeout: HTTP / Keyword only -->
                             <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query'" class="my-3">
-                                <label for="timeout" class="form-label">{{ $t("Request Timeout") }} ({{ $t("timeoutAfter", [ monitor.timeout || clampTimeout(monitor.interval) ]) }})</label>
+                                <label for="timeout" class="form-label">{{ $t("Request Timeout") }} ({{ $t("timeoutAfter", [ monitor.timeout || clampTimeout(monitor.checkInterval) ]) }})</label>
                                 <input id="timeout" v-model="monitor.timeout" type="number" class="form-control" required min="0" step="0.1">
                             </div>
 
-<!--                            <div class="my-3">-->
-<!--                                <label for="resend-interval" class="form-label">-->
-<!--                                    {{ $t("Resend Notification if Down X times consecutively") }}-->
-<!--                                    <span v-if="monitor.resendInterval > 0">({{ $t("resendEveryXTimes", [ monitor.resendInterval ]) }})</span>-->
-<!--                                    <span v-else>({{ $t("resendDisabled") }})</span>-->
-<!--                                </label>-->
-<!--                                <input id="resend-interval" v-model="monitor.resendInterval" type="number" class="form-control" required min="0" step="1">-->
-<!--                            </div>-->
 
 <!--                            <h2 v-if="monitor.type !== 'push'" class="mt-5 mb-2">{{ $t("Advanced") }}</h2>-->
 
@@ -477,7 +469,7 @@
 
                                     <VueMultiselect
                                         id="acceptedStatusCodes"
-                                        v-model="monitor.accepted_statuscodes"
+                                        v-model="monitor.acceptedStatuscodes"
                                         :options="acceptedStatusCodeOptions"
                                         :multiple="true"
                                         :close-on-select="false"
@@ -530,9 +522,10 @@
                             </p>
 
                             <div v-for="notification in $root.notificationList" :key="notification.id" class="form-check form-switch my-3">
-                                <input :id=" 'notification' + notification.id" v-model="monitor.notificationIDList[notification.id]" class="form-check-input" type="checkbox">
+                              <input :id=" 'notification' + notification.id" v-model="monitor.notificationIDList[notification.id]" class="form-check-input" type="checkbox">
 
-                                <label class="form-check-label" :for=" 'notification' + notification.id">
+
+                              <label class="form-check-label" :for=" 'notification' + notification.id">
                                     {{ notification.name }}
                                     <a href="#" @click="$refs.notificationDialog.show(notification.id)">{{ $t("Edit") }}</a>
                                 </label>
@@ -543,34 +536,6 @@
                             <button class="btn btn-primary me-2" type="button" @click="$refs.notificationDialog.show()">
                                 {{ $t("Setup Notification") }}
                             </button>
-
-                            <!-- Proxies -->
-<!--                            <div v-if="monitor.type === 'http' || monitor.type === 'keyword' || monitor.type === 'json-query'">-->
-<!--                                <h2 class="mt-5 mb-2">{{ $t("Proxy") }}</h2>-->
-<!--                                <p v-if="$root.proxyList.length === 0">-->
-<!--                                    {{ $t("Not available, please setup.") }}-->
-<!--                                </p>-->
-
-<!--                                <div v-if="$root.proxyList.length > 0" class="form-check my-3">-->
-<!--                                    <input id="proxy-disable" v-model="monitor.proxyId" :value="null" name="proxy" class="form-check-input" type="radio">-->
-<!--                                    <label class="form-check-label" for="proxy-disable">{{ $t("No Proxy") }}</label>-->
-<!--                                </div>-->
-
-<!--                                <div v-for="proxy in $root.proxyList" :key="proxy.id" class="form-check my-3">-->
-<!--                                    <input :id="`proxy-${proxy.id}`" v-model="monitor.proxyId" :value="proxy.id" name="proxy" class="form-check-input" type="radio">-->
-
-<!--                                    <label class="form-check-label" :for="`proxy-${proxy.id}`">-->
-<!--                                        {{ proxy.host }}:{{ proxy.port }} ({{ proxy.protocol }})-->
-<!--                                        <a href="#" @click="$refs.proxyDialog.show(proxy.id)">{{ $t("Edit") }}</a>-->
-<!--                                    </label>-->
-
-<!--                                    <span v-if="proxy.default === true" class="badge bg-primary ms-2">{{ $t("default") }}</span>-->
-<!--                                </div>-->
-
-<!--                                <button class="btn btn-primary me-2" type="button" @click="$refs.proxyDialog.show()">-->
-<!--                                    {{ $t("Setup Proxy") }}-->
-<!--                                </button>-->
-<!--                            </div>-->
 
                             <!-- Kafka SASL Options -->
                             <!-- Kafka Producer only -->
@@ -675,99 +640,6 @@
                                     <textarea id="headers" v-model="monitor.headers" class="form-control" :placeholder="headersPlaceholder"></textarea>
                                 </div>
 
-<!--                                &lt;!&ndash; HTTP Auth &ndash;&gt;-->
-<!--                                <h4 class="mt-5 mb-2">{{ $t("Authentication") }}</h4>-->
-
-<!--                                &lt;!&ndash; Method &ndash;&gt;-->
-<!--                                <div class="my-3">-->
-<!--                                    <label for="method" class="form-label">{{ $t("Method") }}</label>-->
-<!--                                    <select id="method" v-model="monitor.authMethod" class="form-select">-->
-<!--                                        <option :value="null">-->
-<!--                                            {{ $t("None") }}-->
-<!--                                        </option>-->
-<!--                                        <option value="basic">-->
-<!--                                            {{ $t("HTTP Basic Auth") }}-->
-<!--                                        </option>-->
-<!--                                        <option value="oauth2-cc">-->
-<!--                                            {{ $t("OAuth2: Client Credentials") }}-->
-<!--                                        </option>-->
-<!--                                        <option value="ntlm">-->
-<!--                                            NTLM-->
-<!--                                        </option>-->
-<!--                                        <option value="mtls">-->
-<!--                                            mTLS-->
-<!--                                        </option>-->
-<!--                                    </select>-->
-<!--                                </div>-->
-<!--                                <template v-if="monitor.authMethod && monitor.authMethod !== null ">-->
-<!--                                    <template v-if="monitor.authMethod === 'mtls' ">-->
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="tls-cert" class="form-label">{{ $t("Cert") }}</label>-->
-<!--                                            <textarea id="tls-cert" v-model="monitor.tlsCert" class="form-control" :placeholder="$t('Cert body')" required></textarea>-->
-<!--                                        </div>-->
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="tls-key" class="form-label">{{ $t("Key") }}</label>-->
-<!--                                            <textarea id="tls-key" v-model="monitor.tlsKey" class="form-control" :placeholder="$t('Key body')" required></textarea>-->
-<!--                                        </div>-->
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="tls-ca" class="form-label">{{ $t("CA") }}</label>-->
-<!--                                            <textarea id="tls-ca" v-model="monitor.tlsCa" class="form-control" :placeholder="$t('Server CA')"></textarea>-->
-<!--                                        </div>-->
-<!--                                    </template>-->
-<!--                                    <template v-else-if="monitor.authMethod === 'oauth2-cc' ">-->
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="oauth_auth_method" class="form-label">{{ $t("Authentication Method") }}</label>-->
-<!--                                            <select id="oauth_auth_method" v-model="monitor.oauth_auth_method" class="form-select">-->
-<!--                                                <option value="client_secret_basic">-->
-<!--                                                    {{ $t("Authorization Header") }}-->
-<!--                                                </option>-->
-<!--                                                <option value="client_secret_post">-->
-<!--                                                    {{ $t("Form Data Body") }}-->
-<!--                                                </option>-->
-<!--                                            </select>-->
-<!--                                        </div>-->
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="oauth_token_url" class="form-label">{{ $t("OAuth Token URL") }}</label>-->
-<!--                                            <input id="oauth_token_url" v-model="monitor.oauth_token_url" type="text" class="form-control" :placeholder="$t('OAuth Token URL')" required>-->
-<!--                                        </div>-->
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="oauth_client_id" class="form-label">{{ $t("Client ID") }}</label>-->
-<!--                                            <input id="oauth_client_id" v-model="monitor.oauth_client_id" type="text" class="form-control" :placeholder="$t('Client ID')" required>-->
-<!--                                        </div>-->
-<!--                                        <template v-if="monitor.oauth_auth_method === 'client_secret_post' || monitor.oauth_auth_method === 'client_secret_basic'">-->
-<!--                                            <div class="my-3">-->
-<!--                                                <label for="oauth_client_secret" class="form-label">{{ $t("Client Secret") }}</label>-->
-<!--                                                <input id="oauth_client_secret" v-model="monitor.oauth_client_secret" type="password" class="form-control" :placeholder="$t('Client Secret')" required>-->
-<!--                                            </div>-->
-<!--                                            <div class="my-3">-->
-<!--                                                <label for="oauth_scopes" class="form-label">{{ $t("OAuth Scope") }}</label>-->
-<!--                                                <input id="oauth_scopes" v-model="monitor.oauth_scopes" type="text" class="form-control" :placeholder="$t('Optional: Space separated list of scopes')">-->
-<!--                                            </div>-->
-<!--                                        </template>-->
-<!--                                    </template>-->
-<!--                                    <template v-else>-->
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="basicauth-user" class="form-label">{{ $t("Username") }}</label>-->
-<!--                                            <input id="basicauth-user" v-model="monitor.basic_auth_user" type="text" class="form-control" :placeholder="$t('Username')">-->
-<!--                                        </div>-->
-
-<!--                                        <div class="my-3">-->
-<!--                                            <label for="basicauth-pass" class="form-label">{{ $t("Password") }}</label>-->
-<!--                                            <input id="basicauth-pass" v-model="monitor.basic_auth_pass" type="password" autocomplete="new-password" class="form-control" :placeholder="$t('Password')">-->
-<!--                                        </div>-->
-<!--                                        <template v-if="monitor.authMethod === 'ntlm' ">-->
-<!--                                            <div class="my-3">-->
-<!--                                                <label for="ntlm-domain" class="form-label">{{ $t("Domain") }}</label>-->
-<!--                                                <input id="ntlm-domain" v-model="monitor.authDomain" type="text" class="form-control" :placeholder="$t('Domain')">-->
-<!--                                            </div>-->
-
-<!--                                            <div class="my-3">-->
-<!--                                                <label for="ntlm-workstation" class="form-label">{{ $t("Workstation") }}</label>-->
-<!--                                                <input id="ntlm-workstation" v-model="monitor.authWorkstation" type="text" class="form-control" :placeholder="$t('Workstation')">-->
-<!--                                            </div>-->
-<!--                                        </template>-->
-<!--                                    </template>-->
-<!--                                </template>-->
                             </template>
 
                             <!-- gRPC Options -->
@@ -857,7 +729,7 @@ const monitorDefaults = {
     parent: null,
     url: "https://",
     method: "GET",
-    interval: 60,
+    checkInterval: 60,
     retryInterval: 60,
     resendInterval: 0,
     maxretries: 0,
@@ -868,7 +740,7 @@ const monitorDefaults = {
     packetSize: 56,
     expiryNotification: false,
     maxredirects: 10,
-    accepted_statuscodes: [ "200-299" ],
+    acceptedStatuscodes: [ "200-299" ],
     dns_resolve_type: "A",
     dns_resolve_server: "1.1.1.1",
     docker_container: "",
@@ -1147,7 +1019,7 @@ message HealthCheckResponse {
             this.init();
         },
 
-        "monitor.interval"(value, oldValue) {
+        "monitor.checkInterval"(value, oldValue) {
             // Link interval and retryInterval if they are the same value.
             if (this.monitor.retryInterval === oldValue) {
                 this.monitor.retryInterval = value;
@@ -1262,7 +1134,8 @@ message HealthCheckResponse {
             if (this.isAdd) {
 
                 this.monitor = {
-                    ...monitorDefaults
+                    ...monitorDefaults,
+                    notificationIDList: {}
                 };
 
                 if (this.$root.proxyList && !this.monitor.proxyId) {
@@ -1281,50 +1154,14 @@ message HealthCheckResponse {
             } else if (this.isEdit || this.isClone) {
                 this.$root.getSocket().emit("getMonitor", this.$route.params.id, (res) => {
                     if (res.ok) {
-
-                        if (this.isClone) {
-                            // Reset push token for cloned monitors
-                            if (res.monitor.type === "push") {
-                                res.monitor.pushToken = undefined;
-                            }
-                        }
-
                         this.monitor = res.monitor;
-
-                        if (this.isClone) {
-                            /*
-                            * Cloning a monitor will include properties that can not be posted to backend
-                            * as they are not valid columns in the SQLite table.
-                            */
-                            this.monitor.id = undefined; // Remove id when cloning as we want a new id
-                            this.monitor.includeSensitiveData = undefined;
-                            this.monitor.maintenance = undefined;
-                            // group monitor fields
-                            this.monitor.childrenIDs = undefined;
-                            this.monitor.forceInactive = undefined;
-                            this.monitor.pathName = undefined;
-                            this.monitor.screenshot = undefined;
-
-                            this.monitor.name = this.$t("cloneOf", [ this.monitor.name ]);
-                            this.$refs.tagsManager.newTags = this.monitor.tags.map((monitorTag) => {
-                                return {
-                                    id: monitorTag.tag_id,
-                                    name: monitorTag.name,
-                                    color: monitorTag.color,
-                                    value: monitorTag.value,
-                                    new: true,
-                                };
-                            });
-                            this.monitor.tags = undefined;
-                        }
-
                         // Handling for monitors that are created before 1.7.0
                         if (this.monitor.retryInterval === 0) {
-                            this.monitor.retryInterval = this.monitor.interval;
+                            this.monitor.retryInterval = this.monitor.checkInterval;
                         }
                         // Handling for monitors that are missing/zeroed timeout
                         if (!this.monitor.timeout) {
-                            this.monitor.timeout = ~~(this.monitor.interval * 8) / 10;
+                            this.monitor.timeout = ~~(this.monitor.checkInterval * 8) / 10;
                         }
                     } else {
                         toast.error(res.msg);
@@ -1335,11 +1172,6 @@ message HealthCheckResponse {
             this.draftGroupName = null;
 
         },
-
-        addKafkaProducerBroker(newBroker) {
-            this.monitor.kafkaProducerBrokers.push(newBroker);
-        },
-
         /**
          * Validate form input
          * @returns {boolean} Is the form input valid?
@@ -1407,27 +1239,6 @@ message HealthCheckResponse {
 
             let createdNewParent = false;
 
-            // if (this.draftGroupName && this.monitor.parent === -1) {
-            //     // Create Monitor with name of draft group
-            //     const res = await new Promise((resolve) => {
-            //         this.$root.add({
-            //             ...monitorDefaults,
-            //             type: "group",
-            //             name: this.draftGroupName,
-            //             interval: this.monitor.interval,
-            //             active: false,
-            //         }, resolve);
-            //     });
-            //
-            //     if (res.ok) {
-            //         createdNewParent = true;
-            //         this.monitor.parent = res.monitorID;
-            //     } else {
-            //         toast.error(res.msg);
-            //         this.processing = false;
-            //         return;
-            //     }
-            // }
 
             if (this.isAdd || this.isClone) {
                 this.$root.add(this.monitor, async (res) => {
@@ -1452,13 +1263,14 @@ message HealthCheckResponse {
 
                 });
             } else {
-                await this.$refs.tagsManager.submit(+this.$route.params.id);
 
-                this.$root.getSocket().emit("editMonitor", this.monitor, (res) => {
-                    this.processing = false;
-                    this.$root.toastRes(res);
-                    this.init();
-
+              this.$root.getSocket().emit("editMonitor", this.monitor, (res) => {
+                if (res.ok){
+                  this.$refs.tagsManager.submit(+this.$route.params.id);
+                  this.processing = false;
+                  this.$root.toastRes(res);
+                  this.init();
+                }
                     // Start the new parent monitor after edit is done
                     if (createdNewParent) {
                         this.startParentGroupMonitor();
@@ -1509,7 +1321,7 @@ message HealthCheckResponse {
         // Clamp timeout
         clampTimeout(timeout) {
             // limit to 80% of interval, narrowly avoiding epsilon bug
-            const maxTimeout = ~~(this.monitor.interval * 8 ) / 10;
+            const maxTimeout = ~~(this.monitor.checkInterval * 8 ) / 10;
             const clamped = Math.max(0, Math.min(timeout, maxTimeout));
 
             // 0 will be treated as 80% of interval
@@ -1518,7 +1330,7 @@ message HealthCheckResponse {
 
         finishUpdateInterval() {
             // Update timeout if it is greater than the clamp timeout
-            let clampedValue = this.clampTimeout(this.monitor.interval);
+            let clampedValue = this.clampTimeout(this.monitor.checkInterval);
             if (this.monitor.timeout > clampedValue) {
                 this.monitor.timeout = clampedValue;
             }

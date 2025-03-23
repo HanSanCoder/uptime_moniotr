@@ -7,6 +7,7 @@ package io.hansan.monitor.dto;
  */
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import io.hansan.monitor.model.MonitorModel;
 import io.hansan.monitor.model.NotificationModel;
 import lombok.Data;
@@ -32,7 +33,7 @@ public class MonitorDTO {
     private Integer weight;                // 排序权重
 
     // 监控间隔和重试策略
-    private Integer interval;              // 检查间隔（秒）
+    private Integer checkInterval;              // 检查间隔（秒）
     private Integer retryInterval;         // 重试间隔（秒）
     private Integer resendInterval;        // 重新发送通知间隔（次数）
     private Integer maxretries;            // 最大重试次数
@@ -49,7 +50,8 @@ public class MonitorDTO {
     private String body;                   // HTTP请求体
     private String headers;                // HTTP请求头
     private Integer maxredirects;          // 最大重定向数
-    private List<String> accepted_statuscodes; // 接受的HTTP状态码
+    @JsonDeserialize(using = AcceptedStatuscodesDeserializer.class)
+    private List<String> acceptedStatuscodes; // 接受的HTTP状态码
     private String httpBodyEncoding;       // HTTP请求体编码（json/xml）
 
     // 身份验证
@@ -155,11 +157,18 @@ public class MonitorDTO {
         model.setPort(this.getPort());
         model.setActive(true);
         // 设置检查间隔
-        model.setCheck_interval(this.interval);
+        model.setRetryInterval(this.retryInterval);
+        model.setCheck_interval(this.checkInterval);
         model.setDescription(this.description);
         // 设置重试策略
         model.setMaxretries(this.getMaxretries());
-
+        model.setMaxredirects(this.maxredirects);
+        model.setPacketSize(this.packetSize);
+        model.setMethod(this.method);
+        model.setAcceptedStatuscodes(acceptedStatuscodes != null && !acceptedStatuscodes.isEmpty()
+            ? String.join(",", acceptedStatuscodes)
+            : null);
+        model.setTimeout(this.timeout);
         // 设置关键词
         model.setKeyword(this.getKeyword());
 

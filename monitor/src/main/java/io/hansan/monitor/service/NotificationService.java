@@ -3,6 +3,7 @@ package io.hansan.monitor.service;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import io.hansan.monitor.dto.Result;
+import io.hansan.monitor.dto.UserContext;
 import io.hansan.monitor.mapper.HeartbeatMapper;
 import io.hansan.monitor.mapper.NotificationMapper;
 import io.hansan.monitor.model.HeartbeatModel;
@@ -34,6 +35,7 @@ public class NotificationService extends ServiceImpl<NotificationMapper, Notific
      * 添加新的通知配置
      */
     public Result addNotification(NotificationModel notification) {
+        notification.setUserId(UserContext.getCurrentUserId());
         boolean success = this.save(notification);
         Result result = new Result();
         if (success) {
@@ -70,7 +72,9 @@ public class NotificationService extends ServiceImpl<NotificationMapper, Notific
     }
 
     public List<NotificationModel> listAll() {
-        return notificationMapper.selectList(null);
+        LambdaQueryWrapper<NotificationModel> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(NotificationModel::getUserId, UserContext.getCurrentUserId());
+        return notificationMapper.selectList(wrapper);
     }
 
     /**

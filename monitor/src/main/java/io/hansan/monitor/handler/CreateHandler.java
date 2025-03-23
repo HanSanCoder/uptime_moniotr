@@ -3,10 +3,7 @@ package io.hansan.monitor.handler;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
-import io.hansan.monitor.model.HeartbeatModel;
-import io.hansan.monitor.model.Maintenance;
-import io.hansan.monitor.model.NotificationModel;
-import io.hansan.monitor.model.Tag;
+import io.hansan.monitor.model.*;
 import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
 import org.noear.solon.annotation.Inject;
@@ -33,6 +30,8 @@ public class CreateHandler {
     private NotificationService notificationService;
     @Inject
     private EmailService emailService;
+    @Inject
+    private UserService userService;
     /**
      * 处理添加监控事件
      */
@@ -123,6 +122,22 @@ public class CreateHandler {
                 result.setOk(false);
                 result.setMsg("发送测试邮件失败");
             }
+            ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<Object[]> setup() {
+        return (client, data, ack) -> {
+            String username = (String) data[0];
+            String password = (String) data[1];
+            Result result = userService.createUser(username, password);
+            ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<Void> logout() {
+        return (client, data, ack) -> {
+            Result result = userService.logout();
             ack.sendAckData(result);
         };
     }

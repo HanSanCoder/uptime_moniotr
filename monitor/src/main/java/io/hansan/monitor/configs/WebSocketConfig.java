@@ -67,7 +67,7 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("getSettings", Integer.class, findHandler.getSettings());
         server.addEventListener("editTag", Tag.class, findHandler.editTag());
         server.addEventListener("deleteMonitor", Integer.class, deleteHandler.deleteMonitor());
-        server.addEventListener("editMonitor", MonitorModel.class, findHandler.editMonitor());
+        server.addEventListener("editMonitor", MonitorDTO.class, findHandler.editMonitor());
         server.addEventListener("getMonitor", Integer.class, findHandler.getMonitor());
         server.addEventListener("pauseMonitor", Integer.class, findHandler.pauseMonitor());
         server.addEventListener("resumeMonitor", Integer.class, findHandler.resumeMonitor());
@@ -81,6 +81,9 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("deleteNotification", Integer.class, deleteHandler.deleteNotification());
         server.addEventListener("addNotification", NotificationModel.class, createHandler.addNotification());
         server.addEventListener("testNotification", NotificationModel.class, createHandler.testNotification());
+        server.addEventListener("login", Object[].class, findHandler.login());
+        server.addEventListener("setup", Object[].class, createHandler.setup());
+        server.addEventListener("logout", void.class, createHandler.logout());
 
         server.start();
     }
