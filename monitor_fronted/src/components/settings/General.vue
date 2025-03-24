@@ -74,63 +74,63 @@
 <!--            </div>-->
 
             <!-- Entry Page -->
-            <div class="mb-4">
-                <label class="form-label">{{ $t("Entry Page") }}</label>
+<!--            <div class="mb-4">-->
+<!--                <label class="form-label">{{ $t("Entry Page") }}</label>-->
 
-                <div class="form-check">
-                    <input
-                        id="entryPageDashboard"
-                        v-model="settings.entryPage"
-                        class="form-check-input"
-                        type="radio"
-                        name="entryPage"
-                        value="dashboard"
-                        required
-                    />
-                    <label class="form-check-label" for="entryPageDashboard">
-                        {{ $t("Dashboard") }}
-                    </label>
-                </div>
+<!--                <div class="form-check">-->
+<!--                    <input-->
+<!--                        id="entryPageDashboard"-->
+<!--                        v-model="settings.entryPage"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="entryPage"-->
+<!--                        value="dashboard"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" for="entryPageDashboard">-->
+<!--                        {{ $t("Dashboard") }}-->
+<!--                    </label>-->
+<!--                </div>-->
 
-                <div v-for="statusPage in $root.statusPageList" :key="statusPage.id" class="form-check">
-                    <input
-                        :id="'status-page-' + statusPage.id"
-                        v-model="settings.entryPage"
-                        class="form-check-input"
-                        type="radio"
-                        name="entryPage"
-                        :value="'statusPage-' + statusPage.slug"
-                        required
-                    />
-                    <label class="form-check-label" :for="'status-page-' + statusPage.id">
-                        {{ $t("Status Page") }} - {{ statusPage.title }}
-                    </label>
-                </div>
-            </div>
+<!--                <div v-for="statusPage in $root.statusPageList" :key="statusPage.id" class="form-check">-->
+<!--                    <input-->
+<!--                        :id="'status-page-' + statusPage.id"-->
+<!--                        v-model="settings.entryPage"-->
+<!--                        class="form-check-input"-->
+<!--                        type="radio"-->
+<!--                        name="entryPage"-->
+<!--                        :value="'statusPage-' + statusPage.slug"-->
+<!--                        required-->
+<!--                    />-->
+<!--                    <label class="form-check-label" :for="'status-page-' + statusPage.id">-->
+<!--                        {{ $t("Status Page") }} - {{ statusPage.title }}-->
+<!--                    </label>-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- Primary Base URL -->
-            <div class="mb-4">
-                <label class="form-label" for="primaryBaseURL">
-                    {{ $t("Primary Base URL") }}
-                </label>
+<!--            <div class="mb-4">-->
+<!--                <label class="form-label" for="primaryBaseURL">-->
+<!--                    {{ $t("Primary Base URL") }}-->
+<!--                </label>-->
 
-                <div class="input-group mb-3">
-                    <input
-                        id="primaryBaseURL"
-                        v-model="settings.primaryBaseURL"
-                        class="form-control"
-                        name="primaryBaseURL"
-                        placeholder="https://"
-                        pattern="https?://.+"
-                        autocomplete="new-password"
-                    />
-                    <button class="btn btn-outline-primary" type="button" @click="autoGetPrimaryBaseURL">
-                        {{ $t("Auto Get") }}
-                    </button>
-                </div>
+<!--                <div class="input-group mb-3">-->
+<!--                    <input-->
+<!--                        id="primaryBaseURL"-->
+<!--                        v-model="settings.primaryBaseURL"-->
+<!--                        class="form-control"-->
+<!--                        name="primaryBaseURL"-->
+<!--                        placeholder="https://"-->
+<!--                        pattern="https?://.+"-->
+<!--                        autocomplete="new-password"-->
+<!--                    />-->
+<!--                    <button class="btn btn-outline-primary" type="button" @click="autoGetPrimaryBaseURL">-->
+<!--                        {{ $t("Auto Get") }}-->
+<!--                    </button>-->
+<!--                </div>-->
 
-                <div class="form-text"></div>
-            </div>
+<!--                <div class="form-text"></div>-->
+<!--            </div>-->
 
             <!-- Steam API Key -->
 <!--            <div class="mb-4">-->
@@ -228,28 +228,28 @@
 <!--            </div>-->
 
             <!-- Chrome Executable -->
-            <div class="mb-4">
-                <label class="form-label" for="primaryBaseURL">
-                    {{ $t("chromeExecutable") }}
-                </label>
+<!--            <div class="mb-4">-->
+<!--                <label class="form-label" for="primaryBaseURL">-->
+<!--                    {{ $t("chromeExecutable") }}-->
+<!--                </label>-->
 
-                <div class="input-group mb-3">
-                    <input
-                        id="primaryBaseURL"
-                        v-model="settings.chromeExecutable"
-                        class="form-control"
-                        name="primaryBaseURL"
-                        :placeholder="$t('chromeExecutableAutoDetect')"
-                    />
-                    <button class="btn btn-outline-primary" type="button" @click="testChrome">
-                        {{ $t("Test") }}
-                    </button>
-                </div>
+<!--                <div class="input-group mb-3">-->
+<!--                    <input-->
+<!--                        id="primaryBaseURL"-->
+<!--                        v-model="settings.chromeExecutable"-->
+<!--                        class="form-control"-->
+<!--                        name="primaryBaseURL"-->
+<!--                        :placeholder="$t('chromeExecutableAutoDetect')"-->
+<!--                    />-->
+<!--                    <button class="btn btn-outline-primary" type="button" @click="testChrome">-->
+<!--                        {{ $t("Test") }}-->
+<!--                    </button>-->
+<!--                </div>-->
 
-                <div class="form-text">
-                    {{ $t("chromeExecutableDescription") }}
-                </div>
-            </div>
+<!--                <div class="form-text">-->
+<!--                    {{ $t("chromeExecutableDescription") }}-->
+<!--                </div>-->
+<!--            </div>-->
 
             <!-- Save Button -->
             <div>
@@ -300,7 +300,7 @@ export default {
         },
         /** Get the base URL of the application */
         autoGetPrimaryBaseURL() {
-            this.settings.primaryBaseURL = location.protocol + "//" + location.host;
+            this.settings.primaryBaseURL = "http://localhost:3000";
         },
 
         testChrome() {

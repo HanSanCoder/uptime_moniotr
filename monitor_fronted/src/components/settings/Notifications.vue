@@ -25,18 +25,18 @@
             <p>{{ $t("certificationExpiryDescription") }}</p>
             <p>{{ $t("notificationDescription") }}</p>
             <div class="mt-1 mb-3 ps-2 cert-exp-days col-12 col-xl-6">
-                <div v-for="day in settings.tlsExpiryNotifyDays" :key="day" class="d-flex align-items-center justify-content-between cert-exp-day-row py-2">
-                    <span>{{ day }} {{ $tc("day", day) }}</span>
-                    <button type="button" class="btn-rm-expiry btn btn-outline-danger ms-2 py-1" :aria-label="$t('Remove the expiry notification')" @click="removeExpiryNotifDay(day)">
-                        <font-awesome-icon icon="times" />
-                    </button>
-                </div>
+<!--                <div v-for="day in settings.tlsExpiryNotifyDays" :key="day" class="d-flex align-items-center justify-content-between cert-exp-day-row py-2">-->
+<!--                    <span>{{ day }} {{ $tc("day", day) }}</span>-->
+<!--                    <button type="button" class="btn-rm-expiry btn btn-outline-danger ms-2 py-1" :aria-label="$t('Remove the expiry notification')" @click="removeExpiryNotifDay(day)">-->
+<!--                        <font-awesome-icon icon="times" />-->
+<!--                    </button>-->
+<!--                </div>-->
             </div>
             <div class="col-12 col-xl-6">
                 <ActionInput v-model="expiryNotifInput" :type="'number'" :placeholder="$t('day')" :icon="'plus'" :action="() => addExpiryNotifDay(expiryNotifInput)" :action-aria-label="$t('Add a new expiry notification day')" />
             </div>
             <div>
-                <button class="btn btn-primary" type="button" @click="saveSettings()">
+                <button class="btn btn-primary" type="button" @click="save()">
                     {{ $t("Save") }}
                 </button>
             </div>
@@ -65,25 +65,25 @@ export default {
         };
     },
 
-    computed: {
-        settings() {
-            return this.$parent.$parent.$parent.settings;
-        },
-        saveSettings() {
-            return this.$parent.$parent.$parent.saveSettings;
-        },
-        settingsLoaded() {
-            return this.$parent.$parent.$parent.settingsLoaded;
-        },
+    created() {
+      this.settings()
     },
 
-    methods: {
-        /**
-         * Remove a day from expiry notification days.
-         * @param {number} day The day to remove.
-         */
-        removeExpiryNotifDay(day) {
-            this.settings.tlsExpiryNotifyDays = this.settings.tlsExpiryNotifyDays.filter(d => d !== day);
+  methods: {
+
+        save() {
+          this.$root.getSocket().emit("setTLSDay", this.expiryNotifInput,(res) => {
+            if (res) {
+              this.expiryNotifInput = res.expiryDay;
+            }
+          });
+        },
+        settings() {
+          this.$root.getSocket().emit("getTLSDay", (res) => {
+            if (res) {
+              this.expiryNotifInput = res;
+            }
+          });
         },
         /**
          * Add a new expiry notification day.

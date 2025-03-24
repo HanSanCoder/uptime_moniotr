@@ -98,27 +98,6 @@ export default {
                 tags: {
                     title: this.$t("Tags"),
                 },
-                // "monitor-history": {
-                //     title: this.$t("Monitor History"),
-                // },
-                // "docker-hosts": {
-                //     title: this.$t("Docker Hosts"),
-                // },
-                // security: {
-                //     title: this.$t("Security"),
-                // },
-                // "api-keys": {
-                //     title: this.$t("API Keys")
-                // },
-                // proxies: {
-                //     title: this.$t("Proxies"),
-                // },
-                // backup: {
-                //     title: this.$t("Backup"),
-                // },
-                // about: {
-                //     title: this.$t("About"),
-                // },
             };
         },
     },
@@ -199,19 +178,12 @@ export default {
          * @param {string} [currentPassword] Only need for disableAuth to true
          */
         saveSettings(callback, currentPassword) {
-            let valid = this.validateSettings();
-            if (valid.success) {
-                this.$root.getSocket().emit("setSettings", this.settings, currentPassword, (res) => {
-                    this.$root.toastRes(res);
-                    this.loadSettings();
-
-                    if (callback) {
-                        callback();
-                    }
-                });
-            } else {
-                this.$root.toastError(valid.msg);
+          this.$root.getSocket().emit("setSettings", this.settings, currentPassword, (res) => {
+            this.$root.toastRes(res);
+            if (callback) {
+              callback();
             }
+          });
         },
 
         /**

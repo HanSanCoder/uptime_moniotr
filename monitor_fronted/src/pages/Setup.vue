@@ -91,7 +91,7 @@ export default {
 
                     this.$root.login(this.username, this.password, "", () => {
                         this.processing = false;
-                        this.$router.push("/");
+                        this.$router.push("/dashboard");
                     });
                 }
             });
