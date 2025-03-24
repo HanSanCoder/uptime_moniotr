@@ -26,13 +26,7 @@ public class TcpMonitorChecker extends AbstractMonitorChecker {
             long responseTime = 0;
             try (Socket socket = new Socket()) {
                 // 设置超时
-                int timeout = 5000; // 默认5秒
-                if (monitor.getCheck_interval() != null) {
-                    timeout = monitor.getCheck_interval() * 1000;
-                }
-                log.debug("开始TCP检查: {}, 主机名: {}, 端口: {}, 超时: {}ms",
-                        monitor.getName(), monitor.getHostname(), monitor.getPort(), timeout);
-
+                int timeout = monitor.getTimeout() != null ? monitor.getTimeout().intValue() * 1000: 5000; // 默认5秒
                 long startTime = System.currentTimeMillis();
                 socket.connect(
                         new java.net.InetSocketAddress(monitor.getHostname(), monitor.getPort()),

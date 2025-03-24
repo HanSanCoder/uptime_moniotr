@@ -24,7 +24,8 @@ public abstract class AbstractMonitorChecker implements MonitorChecker {
         broadcastHeartbeats(monitor);
         try {
             // 重试前等待一段时间
-            Thread.sleep(1000);
+            Integer retryInterval = (monitor.getRetryInterval() != null ? monitor.getRetryInterval() : 15) * 1000;
+            Thread.sleep(retryInterval);
         } catch (InterruptedException ie) {
             Thread.currentThread().interrupt();
         }

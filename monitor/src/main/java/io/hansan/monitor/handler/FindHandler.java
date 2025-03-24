@@ -3,6 +3,7 @@ package io.hansan.monitor.handler;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
+import io.hansan.monitor.dto.UserContext;
 import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.model.Maintenance;
 import io.hansan.monitor.model.MonitorModel;
@@ -186,6 +187,12 @@ public class FindHandler {
             String password = (String) data[1];
             Result result = userService.login(username, password);
             ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<Void> getTLSDay() {
+        return (client, data, ack) -> {
+            ack.sendAckData(UserContext.getExpiryDay());
         };
     }
 }

@@ -84,6 +84,8 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("login", Object[].class, findHandler.login());
         server.addEventListener("setup", Object[].class, createHandler.setup());
         server.addEventListener("logout", void.class, createHandler.logout());
+        server.addEventListener("setTLSDay", Integer.class, createHandler.setTLSDay());
+        server.addEventListener("getTLSDay", void.class, findHandler.getTLSDay());
 
         server.start();
     }

@@ -32,4 +32,5 @@ public class Result {
     private List<HeartbeatModel> beats;
     private Long maintenanceID;
     private String username;
+    private Integer expiryDay;
 }

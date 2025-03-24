@@ -156,6 +156,8 @@ public class MonitorDTO {
         model.setHostname(this.getHostname());
         model.setPort(this.getPort());
         model.setActive(true);
+        model.setBody(this.body);
+        model.setHeaders(this.headers);
         // 设置检查间隔
         model.setRetryInterval(this.retryInterval);
         model.setCheck_interval(this.checkInterval);

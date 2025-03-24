@@ -70,6 +70,9 @@ public class MonitorModel {
     @TableField(exist = false)
     private Integer checkInterval;
 
+    private String body;                   // HTTP请求体
+    private String headers;                // HTTP请求头
+
     /**
      * 要监控的URL地址
      * 对于HTTP监控，此处为完整URL

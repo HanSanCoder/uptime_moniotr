@@ -64,7 +64,7 @@ export default {
     },
     mounted() {
         // 直接跳转到 dashboard 页面，不进行 axios 请求
-        this.$router.push("/dashboard");
+        this.$router.push("/setup");
     },
 };
 </script>

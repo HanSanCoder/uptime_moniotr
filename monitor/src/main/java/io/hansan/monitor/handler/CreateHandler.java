@@ -3,6 +3,7 @@ package io.hansan.monitor.handler;
 import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
+import io.hansan.monitor.dto.UserContext;
 import io.hansan.monitor.model.*;
 import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
@@ -138,6 +139,17 @@ public class CreateHandler {
     public DataListener<Void> logout() {
         return (client, data, ack) -> {
             Result result = userService.logout();
+            ack.sendAckData(result);
+        };
+    }
+
+    public DataListener<Integer> setTLSDay() {
+        return (client, data, ack) -> {
+            Result result = new Result();
+            UserContext.setExpiryDay(data);
+            result.setOk(true);
+            result.setMsg("设置证书通知时间成功");
+            result.setExpiryDay(UserContext.getExpiryDay());
             ack.sendAckData(result);
         };
     }

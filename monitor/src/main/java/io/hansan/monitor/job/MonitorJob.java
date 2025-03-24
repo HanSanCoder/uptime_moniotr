@@ -108,6 +108,7 @@ public class MonitorJob {
         int status;
         String message = null;
         float ping = 0;
+        boolean important = false;
 
         try {
             // 使用策略模式获取对应的检查器
@@ -116,29 +117,30 @@ public class MonitorJob {
             status = result.isUp() ? 1 : 0;
             message = result.getMessage();
             ping = result.getPing();
+            important = result.isImportant();
         } catch (Exception e) {
             status = 0;
             message = "Error: " + e.getMessage();
             log.error("监控检查异常: {}", monitor.getName(), e);
         }
 
-        // 检查完成后的响应时间
         float responseTime = (System.currentTimeMillis() - startTime) / 1000.0f;
 
         // 处理检查结果
-        processCheckResult(monitor, status, ping, responseTime, message);
+        processCheckResult(monitor, status, ping, responseTime, message, important);
     }
 
     /**
      * 处理检查结果
      */
-    private void processCheckResult(MonitorModel monitor, int status, float ping, float responseTime, String message) {
+    private void processCheckResult(MonitorModel monitor, int status, float ping, float responseTime, String message, boolean important) {
         try {
             // 获取之前的状态
             Integer previousStatus = heartbeatService.getLatestStatus(monitor.getId(), monitor.getMaxretries() + 1);
             HeartbeatModel heartbeat = new HeartbeatModel();
             heartbeat.setMonitorId(monitor.getId());
             heartbeat.setStatus(status);
+            heartbeat.setImportant(important);
             heartbeat.setDuration((int) responseTime);
             heartbeat.setMsg(message);
             heartbeat.setPing((double) ping);
