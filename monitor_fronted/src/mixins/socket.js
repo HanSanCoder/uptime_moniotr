@@ -394,13 +394,14 @@ export default {
 
         /** Log out of the web application */
         logout() {
-            socket.emit("logout", () => {
-            });
-            this.storage().removeItem("token");
-            this.socket.token = null;
-            this.loggedIn = false;
-            this.username = null;
-            this.clearData();
+            // socket.emit("logout", () => {
+            // });
+            // this.storage().removeItem("token");
+            // this.socket.token = null;
+            // this.loggedIn = false;
+            // this.username = null;
+            // this.clearData();
+            this.$router.push("/setup");
         },
 
         /**
