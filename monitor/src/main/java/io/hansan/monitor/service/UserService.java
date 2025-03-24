@@ -42,18 +42,30 @@ public class UserService extends ServiceImpl<UserMapper, User> {
      * 创建用户
      */
     public Result createUser(String username, String password) {
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setActive(true);
-        user.setCreatedAt(LocalDateTime.now());
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getUsername, username);
+        wrapper.eq(User::getPassword, password);
+        User user = this.getOne(wrapper);
         Result result = new Result();
-        boolean save = this.save(user);
-        result.setOk(save);
-        if (save) {
-            result.setMsg("创建用户成功");
+        if (user != null) {
+            UserContext.setCurrentUserId(Math.toIntExact(user.getId()));
+            result.setUsername(user.getUsername());
+            result.setOk(true);
+            result.setMsg("登录成功");
         } else {
-            result.setMsg("创建用户失败");
+            user.setUsername(username);
+            user.setPassword(password);
+            user.setActive(true);
+            user.setCreatedAt(LocalDateTime.now());
+            boolean save = this.save(user);
+            result.setOk(save);
+            if (save) {
+                result.setOk(true);
+                result.setMsg("创建用户成功");
+            } else {
+                result.setOk(false);
+                result.setMsg("创建用户失败");
+            }
         }
         return result;
     }
