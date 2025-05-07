@@ -63,7 +63,7 @@ private static final Logger log = LoggerFactory.getLogger(WebSocketConfig.class)
         server.addEventListener("getMonitorMaintenance", Integer.class, findHandler.getMonitorMaintenance());
         server.addEventListener("addMonitorMaintenance", Object[].class, createHandler.addMonitorMaintenance());
         server.addEventListener("getMaintenanceList", Void.class, findHandler.getMaintenanceList());
-        server.addEventListener("setSettings", Integer.class, createHandler.setSettings());
+        server.addEventListener("setSettings", Object[].class, createHandler.setSettings());
         server.addEventListener("getSettings", Integer.class, findHandler.getSettings());
         server.addEventListener("editTag", Tag.class, findHandler.editTag());
         server.addEventListener("deleteMonitor", Integer.class, deleteHandler.deleteMonitor());

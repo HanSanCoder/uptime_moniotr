@@ -54,6 +54,7 @@ public class DeleteHandler {
             Result result = heartbeatService.removeByMonitorId(data);
             List<HeartbeatModel> beats = heartbeatService.getBeats(data);
             client.sendEvent("heartbeatList", data, beats, true);
+            client.sendEvent("importantHeartbeatList", data, heartbeatService.getImportantHeartbeats(data), true);
             ack.sendAckData(result);
         };
     }
@@ -63,6 +64,7 @@ public class DeleteHandler {
             Result result = heartbeatService.removeEventsByMonitorId(data);
             List<HeartbeatModel> beats = heartbeatService.getBeats(data);
             client.sendEvent("heartbeatList", data, beats, true);
+            client.sendEvent("importantHeartbeatList", data, heartbeatService.getImportantHeartbeats(data), true);
             ack.sendAckData(result);
         };
     }

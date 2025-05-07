@@ -36,6 +36,7 @@ public class NotificationService extends ServiceImpl<NotificationMapper, Notific
      */
     public Result addNotification(NotificationModel notification) {
         notification.setUserId(UserContext.getCurrentUserId());
+        notificationMapper.deleteById(notification.getId());
         boolean success = this.save(notification);
         Result result = new Result();
         if (success) {

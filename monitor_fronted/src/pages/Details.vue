@@ -178,7 +178,8 @@
                     <tbody>
                         <tr v-for="(beat, index) in displayedRecords" :key="index" style="padding: 10px;">
                             <td><Status :status="beat.status" /></td>
-                            <td :class="{ 'border-0':! beat.msg}"><Datetime :value="beat.time" /></td>
+<!--                            <td :class="{ 'border-0':! beat.msg}"><Datetime :value="beat.time" /></td>-->
+                            <td :class="{ 'border-0':! beat.msg}">{{ beat.time }}</td>
                             <td class="border-0">{{ beat.msg }}</td>
                         </tr>
 

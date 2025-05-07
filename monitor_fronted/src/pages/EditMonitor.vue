@@ -27,9 +27,9 @@
 <!--                                        <option value="json-query">-->
 <!--                                            HTTP(s) - {{ $t("Json Query") }}-->
 <!--                                        </option>-->
-                                        <option value="grpc-keyword">
-                                            gRPC(s) - {{ $t("Keyword") }}
-                                        </option>
+<!--                                        <option value="grpc-keyword">-->
+<!--                                            gRPC(s) - {{ $t("Keyword") }}-->
+<!--                                        </option>-->
 <!--                                        <option value="dns">-->
 <!--                                            DNS-->
 <!--                                        </option>-->
@@ -284,16 +284,7 @@
                             <div v-if="monitor.type === 'docker'" class="my-3">
                                 <div class="mb-3">
                                     <label for="docker-host" class="form-label">{{ $t("Docker Host") }}</label>
-                                    <ActionSelect
-                                        id="docker-host"
-                                        v-model="monitor.docker_host"
-                                        :action-aria-label="$t('openModalTo', $t('Setup Docker Host'))"
-                                        :options="dockerHostOptionsList"
-                                        :disabled="$root.dockerHostList == null || $root.dockerHostList.length === 0"
-                                        :icon="'plus'"
-                                        :action="() => $refs.dockerHostDialog.show()"
-                                        :required="true"
-                                    />
+                                    <input id="docker_container" v-model="monitor.docker_host" type="text" class="form-control" required>
                                 </div>
                             </div>
 

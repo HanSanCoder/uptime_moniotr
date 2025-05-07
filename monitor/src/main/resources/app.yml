@@ -39,3 +39,12 @@ mybatis.db1:
       logic-delete-value: 1
       logic-not-delete-value: 0
 
+# Email configuration
+email:
+  smtp:
+    host: smtp.163.com
+    port: 25
+    tls: true
+  username: hehansan0011@163.com
+  password: YGfEDNuBW8a4wdMx
+

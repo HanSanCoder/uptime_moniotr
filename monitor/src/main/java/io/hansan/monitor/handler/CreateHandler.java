@@ -4,6 +4,7 @@ import com.corundumstudio.socketio.listener.DataListener;
 import io.hansan.monitor.dto.MonitorDTO;
 import io.hansan.monitor.dto.Result;
 import io.hansan.monitor.dto.UserContext;
+import io.hansan.monitor.mapper.UserMapper;
 import io.hansan.monitor.model.*;
 import io.hansan.monitor.service.*;
 import org.noear.solon.annotation.Component;
@@ -96,9 +97,12 @@ public class CreateHandler {
         };
     }
 
-    public DataListener<Integer> setSettings() {
+    public DataListener<Object[]> setSettings() {
         return (client, data, ack) -> {
-            ack.sendAckData("设置功能稍后完善");
+            String currentPassword = (String) data[0];
+            String newPassword = (String) data[1];
+            Result result = userService.updatePassword(currentPassword, newPassword);
+            ack.sendAckData(result);
         };
     }
 
@@ -153,4 +157,5 @@ public class CreateHandler {
             ack.sendAckData(result);
         };
     }
+
 }

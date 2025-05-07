@@ -95,4 +95,27 @@ public class UserService extends ServiceImpl<UserMapper, User> {
         result.setMsg("退出登录成功");
         return result;
     }
+
+    public Result updatePassword(String currentPassword, String newPassword) {
+        LambdaQueryWrapper<User> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(User::getId, UserContext.getCurrentUserId());
+        wrapper.eq(User::getPassword, currentPassword);
+        User user = this.getOne(wrapper);
+        Result result = new Result();
+        if (user != null) {
+            user.setPassword(newPassword);
+            boolean update = this.updateById(user);
+            if (update) {
+                result.setOk(true);
+                result.setMsg("修改密码成功");
+            } else {
+                result.setOk(false);
+                result.setMsg("修改密码失败");
+            }
+        } else {
+            result.setOk(false);
+            result.setMsg("当前密码错误");
+        }
+        return result;
+    }
 }

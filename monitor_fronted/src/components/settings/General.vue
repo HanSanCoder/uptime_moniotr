@@ -1,40 +1,50 @@
 <template>
     <div>
         <form class="my-4" autocomplete="off" @submit.prevent="saveGeneral">
-            <!-- Client side Timezone -->
+            <!-- Current Password -->
             <div class="mb-4">
-                <label for="timezone" class="form-label">
-                    {{ $t("Display Timezone") }}
+                <label for="currentPassword" class="form-label small text-secondary mb-1">
+                    {{ $t("当前密码") }}
                 </label>
-                <select id="timezone" v-model="$root.userTimezone" class="form-select">
-                    <option value="auto">
-                        {{ $t("Auto") }}: {{ guessTimezone }}
-                    </option>
-                    <option
-                        v-for="(timezone, index) in timezoneList"
-                        :key="index"
-                        :value="timezone.value"
+                <div class="password-field">
+                    <input
+                        id="currentPassword"
+                        v-model="currentPassword"
+                        :type="showCurrentPassword ? 'text' : 'password'"
+                        class="form-control"
+                        autocomplete="current-password"
+                        required
+                    />
+                    <div
+                        class="toggle-icon"
+                        @click="showCurrentPassword = !showCurrentPassword"
                     >
-                        {{ timezone.name }}
-                    </option>
-                </select>
+                        <font-awesome-icon :icon="showCurrentPassword ? 'eye-slash' : 'eye'" />
+                    </div>
+                </div>
             </div>
 
-            <!-- Server Timezone -->
+            <!-- New Password -->
             <div class="mb-4">
-                <label for="timezone" class="form-label">
-                    {{ $t("Server Timezone") }}
+                <label for="newPassword" class="form-label small text-secondary mb-1">
+                    {{ $t("修改后密码") }}
                 </label>
-                <select id="timezone" v-model="settings.serverTimezone" class="form-select">
-                    <option value="UTC">UTC</option>
-                    <option
-                        v-for="(timezone, index) in timezoneList"
-                        :key="index"
-                        :value="timezone.value"
+                <div class="password-field">
+                    <input
+                        id="newPassword"
+                        v-model="newPassword"
+                        :type="showNewPassword ? 'text' : 'password'"
+                        class="form-control"
+                        autocomplete="new-password"
+                        required
+                    />
+                    <div
+                        class="toggle-icon"
+                        @click="showNewPassword = !showNewPassword"
                     >
-                        {{ timezone.name }}
-                    </option>
-                </select>
+                        <font-awesome-icon :icon="showNewPassword ? 'eye-slash' : 'eye'" />
+                    </div>
+                </div>
             </div>
 
             <!-- Search Engine -->
@@ -274,6 +284,10 @@ export default {
     data() {
         return {
             timezoneList: timezoneList(),
+            currentPassword: "",
+            newPassword: "",
+            showCurrentPassword: false,
+            showNewPassword: false,
         };
     },
 
@@ -282,7 +296,9 @@ export default {
             return this.$parent.$parent.$parent.settings;
         },
         saveSettings() {
-            return this.$parent.$parent.$parent.saveSettings;
+            this.$root.getSocket().emit("setSettings", [this.currentPassword, this.newPassword], (res) => {
+                this.$root.toastRes(res);
+            });
         },
         settingsLoaded() {
             return this.$parent.$parent.$parent.settingsLoaded;
@@ -311,4 +327,65 @@ export default {
     },
 };
 </script>
+<style lang="scss" scoped>
+.password-field {
+    position: relative;
 
+    .form-control {
+        height: 42px;
+        border-radius: 21px;
+        padding-right: 40px;
+        padding-left: 16px;
+        transition: all 0.2s ease;
+        border: 1px solid #ced4da;
+
+        &:focus {
+            box-shadow: 0 0 0 0.15rem rgba(124, 232, 164, 0.35);
+            border-color: #7ce8a4;
+            outline: none;
+        }
+    }
+
+    .toggle-icon {
+        position: absolute;
+        right: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: #8e9aaf;
+        cursor: pointer;
+        font-size: 0.9rem;
+        z-index: 5;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: color 0.15s ease;
+
+        &:hover {
+            color: #495057;
+        }
+    }
+}
+
+.dark .password-field {
+    .form-control {
+        background-color: #2b3035;
+        border-color: #495057;
+        color: #e9ecef;
+
+        &:focus {
+            box-shadow: 0 0 0 0.15rem rgba(124, 232, 164, 0.25);
+            border-color: #7ce8a4;
+        }
+    }
+
+    .toggle-icon {
+        color: #adb5bd;
+
+        &:hover {
+            color: #e9ecef;
+        }
+    }
+}
+</style>

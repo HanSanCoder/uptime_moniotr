@@ -16,24 +16,22 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.noear.solon.annotation.Inject;
-import org.noear.solon.validation.annotation.Email;
 
 import javax.net.ssl.*;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.net.URL;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.*;
 import java.io.UnsupportedEncodingException;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 public class HttpMonitorChecker extends AbstractMonitorChecker {
     @Inject
     private EmailService emailService;
+
+    private static final ConcurrentHashMap<String, Boolean> notifiedCertHosts = new ConcurrentHashMap<>();
 
     public HttpMonitorChecker(HeartbeatService heartbeatService, WebSocketConfig webSocketServer) {
         super(heartbeatService, webSocketServer);
@@ -93,11 +91,15 @@ public class HttpMonitorChecker extends AbstractMonitorChecker {
                             String host = new URL(url).getHost();
                             CertificateInfo certInfo = checkCertificateExpiration(host);
                             if (certInfo != null) {
-                                message += ", 证书有效期至: " + certInfo.expirationDate;
-                                if (certInfo.daysUntilExpiration <= UserContext.getExpiryDay()) {
+                                // 使用原子操作
+                                String hostKey = host + "-" + certInfo.expirationDate;
+                                if (notifiedCertHosts.putIfAbsent(hostKey, Boolean.TRUE) == null) {
+                                    // putIfAbsent返回null表示之前没有这个键，所以这是第一次执行
                                     important = true;
+                                    message = String.format("警告: 证书将在%d天后过期, 证书有效期至: %s", certInfo.daysUntilExpiration, certInfo.expirationDate);
                                     emailService.sendCertificateExpirationNotification(monitor, certInfo.expirationDate, certInfo.daysUntilExpiration);
-                                    message += String.format(" (警告: 证书将在%d天后过期)", certInfo.daysUntilExpiration);
+                                } else {
+                                    message = String.format(" (证书将在%d天后过期)", certInfo.daysUntilExpiration);
                                 }
                             }
                         } catch (Exception e) {

@@ -61,7 +61,7 @@ public class MonitorJob {
     /**
      * 定期检查监控项状态
      */
-    @Scheduled(fixedRate = 600000)
+    @Scheduled(fixedRate = 6000)
     public void checkMonitors() {
         try {
             List<MonitorModel> activeMonitors = monitorMapper.findActiveMonitorsDueForCheck();
