@@ -30,6 +30,7 @@ import MonitorHistory from "./components/settings/MonitorHistory.vue";
 const Security = () => import("./components/settings/Security.vue");
 import Proxies from "./components/settings/Proxies.vue";
 import About from "./components/settings/About.vue";
+import Login from "./components/Login.vue";
 
 const routes = [
     {
@@ -179,6 +180,10 @@ const routes = [
     {
         path: "/:pathMatch(.*)*",
         component: NotFound,
+    },
+    {
+        path: "/login",
+        component: Login,
     },
 ];
 

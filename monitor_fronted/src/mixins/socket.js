@@ -401,7 +401,7 @@ export default {
             // this.loggedIn = false;
             // this.username = null;
             // this.clearData();
-            this.$router.push("/setup");
+            this.$router.push("/login");
         },
 
         /**

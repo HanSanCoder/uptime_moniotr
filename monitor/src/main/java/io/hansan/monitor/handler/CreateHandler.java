@@ -67,6 +67,7 @@ public class CreateHandler {
             Integer monitorId = (Integer) data[1];
             Result result = tagService.addMonitorTag(tagId, monitorId);
             ack.sendAckData(result);
+            client.sendEvent("monitorList", monitorService.listAll());
         };
     }
 

@@ -85,12 +85,12 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
                 monitorMapper.batchInsertMonitorNotifications(monitorId, notificationIDList);
             }
             result.setMonitorID(monitorId);
-            result.setMessage("添加监控成功");
+            result.setMessage("添加"+ monitor.getName() + "成功");
             result.setOk(true);
             return result;
         }
         result.setOk(false);
-        result.setMessage("添加监控失败");
+        result.setMessage("添加"+ monitor.getName() +"失败");
         return result;
     }
 
@@ -125,12 +125,12 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
                 monitorMapper.batchInsertMonitorNotifications(monitorId, notificationIDList);
             }
             result.setMonitorID(monitorId);
-            result.setMsg("修改监控成功");
+            result.setMsg("修改" + monitor.getName() + "成功");
             result.setOk(true);
             return result;
         }
         result.setOk(false);
-        result.setMsg("修改监控失败");
+        result.setMsg("修改" + monitor.getName() + "失败");
         return result;
     }
 
@@ -182,12 +182,12 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
         Result result = new Result();
         if (updated) {
             result.setOk(true);
-            result.setMsg("暂停监控成功");
+            result.setMsg("暂停" + monitor.getName() + "成功");
             result.setMonitor(monitor);
             return result;
         }
         result.setOk(false);
-        result.setMsg("暂停监控失败");
+        result.setMsg("暂停"+ monitor.getName() +"失败");
         return result;
     }
 
@@ -198,12 +198,12 @@ public class MonitorService extends ServiceImpl<MonitorMapper, MonitorModel> {
         Result result = new Result();
         if (updated) {
             result.setOk(true);
-            result.setMsg("恢复监控成功");
+            result.setMsg("恢复" + monitor.getName() +"成功");
             result.setMonitor(monitor);
             return result;
         }
         result.setOk(false);
-        result.setMsg("恢复监控失败");
+        result.setMsg("恢复" + monitor.getName() + "失败");
         return result;
     }
 }

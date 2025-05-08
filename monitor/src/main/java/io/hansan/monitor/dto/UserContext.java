@@ -9,6 +9,42 @@ public class UserContext {
     // 默认证书到期警告天数为30天
     private static final ThreadLocal<Integer> expiryDay = ThreadLocal.withInitial(() -> 30);
 
+    private static final ThreadLocal<Long> daysUntilExpiration = ThreadLocal.withInitial(() -> 22L);
+    private static final ThreadLocal<String> expirationDate = ThreadLocal.withInitial(() -> "2025-06-02");
+
+    /**
+     * 获取证书到期剩余天数
+     */
+    public static Long getDaysUntilExpiration() {
+        return daysUntilExpiration.get();
+    }
+
+    /**
+     * 设置证书到期剩余天数
+     */
+    public static void setDaysUntilExpiration(Long days) {
+        if (days != null && days > 0) {
+            daysUntilExpiration.set(days);
+        }
+    }
+
+    /**
+     * 获取证书过期日期
+     */
+    public static String getExpirationDate() {
+        return expirationDate.get();
+    }
+
+    /**
+     * 设置证书过期日期
+     */
+    public static void setExpirationDate(String date) {
+        if (date != null && !date.isEmpty()) {
+            expirationDate.set(date);
+        }
+    }
+
+
     /**
      * 获取当前用户ID
      */

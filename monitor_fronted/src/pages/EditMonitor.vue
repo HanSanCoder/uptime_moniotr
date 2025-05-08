@@ -1261,6 +1261,7 @@ message HealthCheckResponse {
                   this.processing = false;
                   this.$root.toastRes(res);
                   this.init();
+                  this.$router.push("/dashboard/" + res.monitorID);
                 }
                     // Start the new parent monitor after edit is done
                     if (createdNewParent) {

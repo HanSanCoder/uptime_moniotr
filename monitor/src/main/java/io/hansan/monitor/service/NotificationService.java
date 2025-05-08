@@ -41,10 +41,10 @@ public class NotificationService extends ServiceImpl<NotificationMapper, Notific
         Result result = new Result();
         if (success) {
             result.setOk(true);
-            result.setMsg("添加通知选项成功");
+            result.setMsg("添加"+ notification.getName() + "通知选项成功");
         } else {
             result.setOk(false);
-            result.setMsg("添加通知选项失败");
+            result.setMsg("添加"+ notification.getName() + "通知选项失败");
         }
         return result;
     }
@@ -84,20 +84,20 @@ public class NotificationService extends ServiceImpl<NotificationMapper, Notific
     // 根据通知规则处理
     public void handleStatusChangeNotification(MonitorModel monitor) {
 
-        // 检查最近的3次心跳
+        // 检查最近的2次心跳
         List<HeartbeatModel> recentHeartbeats = heartbeatMapper.selectList(
                 new LambdaQueryWrapper<HeartbeatModel>()
                         .eq(HeartbeatModel::getMonitorId, monitor.getId())
                         .orderByDesc(HeartbeatModel::getTime)
-                        .last("LIMIT 3")
+                        .last("LIMIT 1")
         );
 
-        // 检查是否有3个心跳且全部为在线状态
-        boolean allUp = recentHeartbeats.size() == 3 &&
+        // 检查是否有2个心跳且全部为在线状态
+        boolean allUp = recentHeartbeats.size() == 1 &&
                 recentHeartbeats.stream().allMatch(h -> h.getStatus() == 1);
 
-        // 检查是否有3个心跳且全部为离线状态（status为0或2均视为离线）
-        boolean allDown = recentHeartbeats.size() == 3 &&
+        // 检查是否有2个心跳且全部为离线状态（status为0或2均视为离线）
+        boolean allDown = recentHeartbeats.size() == 1 &&
                 recentHeartbeats.stream().allMatch(h -> h.getStatus() == 0 || h.getStatus() == 2);
 
         if (allDown && !monitor.isNotified()) {

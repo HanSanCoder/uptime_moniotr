@@ -21,16 +21,18 @@
                     </div>
                 </div>
 
-                <div class="form-check mb-3 mt-3 d-flex justify-content-center pe-4">
-                    <div class="form-check">
-                        <input id="remember" v-model="$root.remember" type="checkbox" value="remember-me" class="form-check-input">
+                <div class="section-divider"></div>
+                <button
+                    class="w-100 btn btn-primary"
+                    type="button"
+                    :disabled="processing"
+                    @click="navigateToSetup"
+                >
+                  {{ $t("注册") }}
+                </button>
+              <div class="section-divider"></div>
 
-                        <label class="form-check-label" for="remember">
-                            {{ $t("Remember me") }}
-                        </label>
-                    </div>
-                </div>
-                <button class="w-100 btn btn-primary" type="submit" :disabled="processing">
+              <button class="w-100 btn btn-primary" type="submit" :disabled="processing">
                     {{ $t("Login") }}
                 </button>
 
@@ -67,16 +69,23 @@ export default {
         /** Submit the user details and attempt to log in */
         submit() {
             this.processing = true;
-
-            this.$root.login(this.username, this.password, this.token, (res) => {
-                this.processing = false;
-
-                if (res.tokenRequired) {
-                    this.tokenRequired = true;
-                } else {
-                    this.res = res;
-                }
+            this.$root.login(this.username, this.password, "", () => {
             });
+            this.$root.getSocket().emit("login", [this.username, this.password], (res) => {
+              if (res.ok) {
+                this.processing = false;
+                this.$router.push("/dashboard");
+                this.$root.toastSuccess(res.msg);
+              } else {
+                this.$router.push("/login");
+                this.$root.toastError(res.msg);
+              }
+            });
+
+        },
+
+        navigateToSetup() {
+          this.$router.push("/setup");
         },
     },
 };
@@ -100,6 +109,9 @@ export default {
     }
 }
 
+.section-divider {
+  height: 20px;
+}
 .form {
     width: 100%;
     max-width: 330px;

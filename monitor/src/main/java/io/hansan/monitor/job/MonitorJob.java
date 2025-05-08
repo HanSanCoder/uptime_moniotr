@@ -1,14 +1,17 @@
 package io.hansan.monitor.job;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import io.hansan.monitor.check.HttpMonitorChecker;
 import io.hansan.monitor.check.HttpResult;
 import io.hansan.monitor.check.MonitorChecker;
 import io.hansan.monitor.check.MonitorCheckerFactory;
 import io.hansan.monitor.configs.WebSocketConfig;
+import io.hansan.monitor.dto.UserContext;
 import io.hansan.monitor.mapper.HeartbeatMapper;
 import io.hansan.monitor.mapper.MonitorMapper;
 import io.hansan.monitor.model.HeartbeatModel;
 import io.hansan.monitor.model.MonitorModel;
+import io.hansan.monitor.service.EmailService;
 import io.hansan.monitor.service.HeartbeatService;
 import io.hansan.monitor.service.MonitorService;
 import io.hansan.monitor.service.NotificationService;
@@ -25,9 +28,12 @@ import org.noear.solon.scheduling.annotation.Scheduled;
 
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.URL;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -58,16 +64,36 @@ public class MonitorJob {
     @Inject
     private WebSocketConfig webSocketServer;
 
+    @Inject
+    private EmailService emailService;
+
+    private final Map<Integer, Long> lastCheckTimeMap = new ConcurrentHashMap<>();
+    private static final ConcurrentHashMap<String, Boolean> notifiedCertHosts = new ConcurrentHashMap<>();
     /**
      * 定期检查监控项状态
      */
-    @Scheduled(fixedRate = 6000)
+    @Scheduled(fixedRate = 5000)
     public void checkMonitors() {
         try {
             List<MonitorModel> activeMonitors = monitorMapper.findActiveMonitorsDueForCheck();
             // 针对每个需要检查的监控项，提交到线程池执行
             for (MonitorModel monitor : activeMonitors) {
-                executorService.submit(() -> performCheck(monitor));
+                int monitorId = monitor.getId();
+                long currentTime = System.currentTimeMillis();
+
+                // 从模型获取检查间隔（单位：秒），如果为空则默认为60秒
+                long checkIntervalMs = monitor.getCheckInterval() * 1000L;
+
+                // 只有当间隔时间已过时才提交任务
+                Long lastCheckTime = lastCheckTimeMap.get(monitorId);
+                if (lastCheckTime == null || (currentTime - lastCheckTime) >= checkIntervalMs) {
+                    lastCheckTimeMap.put(monitorId, currentTime);
+                    executorService.submit(() -> performCheck(monitor));
+                }else {
+                    log.debug("跳过监控项 {} 的检查 - 下次检查将在 {} 秒后",
+                            monitor.getName(),
+                            (checkIntervalMs - (currentTime - lastCheckTime)) / 1000);
+                }
             }
         } catch (Exception e) {
             log.error("监控检查任务异常", e);
@@ -157,6 +183,17 @@ public class MonitorJob {
                 heartbeatService.updateById(heartbeat);
                 log.info("监控状态变化: {} 从 {} 变为 {}", monitor.getName(), previousStatus == 0 ? "down" : "up", status == 0 ? "down" : "up");
             }
+            // 如果是HTTPS请求，检查TLS证书有效期
+            String url = monitor.getUrl();
+            if (url != null && url.toLowerCase().startsWith("https://")) {
+                    String hostKey = monitor.getId() + "-" + UserContext.getExpirationDate();
+                    if (notifiedCertHosts.putIfAbsent(hostKey, Boolean.TRUE) == null) {
+                        emailService.sendCertificateExpirationNotification(monitor,
+                            UserContext.getExpirationDate(),
+                            UserContext.getDaysUntilExpiration());
+                    }
+            }
+
             // 广播心跳数据
             if (webSocketServer != null && webSocketServer.getSocketIOServer() != null) {
                 List<HeartbeatModel> beats = heartbeatService.getBeats(monitor.getId());
